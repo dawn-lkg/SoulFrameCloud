@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clm.modules.notice.mapper.MessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.clm.modules.notice.domain.entity.Message">
+        <id column="id" property="id"/>
+        <result column="sender_id" property="senderId"/>
+        <result column="sender" property="sender"/>
+        <result column="receiver_id" property="receiverId"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="read" property="read"/>
+        <result column="avatar" property="avatar"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <!-- 消息视图对象映射结果 -->
+    <resultMap id="MessageVOMap" type="com.clm.modules.notice.domain.vo.MessageVO">
+        <id column="id" property="id"/>
+        <result column="sender" property="sender"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="read" property="read"/>
+        <result column="avatar" property="avatar"/>
+        <result column="create_time" property="time"/>
+    </resultMap>
+
+    <!-- 获取当前用户的消息分页列表 -->
+    <select id="selectMessagePage" resultMap="MessageVOMap">
+        SELECT
+        id, sender, content, type, `read`, avatar, create_time
+        FROM
+        sys_message
+        WHERE
+        receiver_id = #{receiverId}
+        AND del_flag = 0
+        <if test="sender != null and sender != ''">
+            AND sender LIKE CONCAT('%', #{sender}, '%')
+        </if>
+        <if test="content != null and content != ''">
+            AND content LIKE CONCAT('%', #{content}, '%')
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="read != null">
+            AND `read` = #{read}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <!-- 获取当前用户的未读消息数量 -->
+    <select id="selectUnreadCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM sys_message
+        WHERE receiver_id = #{receiverId}
+          AND `read` = 0
+          AND del_flag = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clm.modules.system.mapper.DeptMapper">
+
+    <sql id="Base_Column_List">
+        dept_id
+        , parent_id, ancestors, dept_name, order_num, leader, phone, email, status,
+        create_by, create_time, update_by, update_time, remark, del_flag
+    </sql>
+
+    <!-- 查询部门列表 -->
+    <select id="selectDeptList" resultType="com.clm.modules.system.domain.vo.DeptVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_dept
+        <where>
+            <if test="deptName != null and deptName != ''">
+                AND dept_name LIKE CONCAT('%', #{deptName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            AND del_flag = '0'
+        </where>
+        ORDER BY parent_id, order_num
+    </select>
+
+    <!-- 根据ID查询部门信息 -->
+    <select id="selectDeptById" resultType="com.clm.modules.system.domain.vo.DeptVO">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_dept
+        WHERE dept_id = #{deptId}
+        AND del_flag = '0'
+    </select>
+
+    <!-- 是否存在子部门 -->
+    <select id="hasChildByDeptId" resultType="int">
+        SELECT COUNT(1)
+        FROM sys_dept
+        WHERE parent_id = #{deptId}
+          AND del_flag = '0'
+    </select>
+
+    <!-- 查询部门是否存在用户 -->
+    <select id="checkDeptExistUser" resultType="int">
+        SELECT COUNT(1)
+        FROM sys_user
+        WHERE dept_id = #{deptId}
+          AND del_flag = '0'
+    </select>
+
+    <select id="getDeptSelectList" resultType="com.clm.modules.system.domain.vo.DeptSelectVO">
+        SELECT a.dept_id        as id,
+               a.dept_name      as title,
+               a.parent_id,
+               COUNT(b.user_id) as userCount
+        FROM sys_dept a
+                 LEFT JOIN sys_user b ON b.dept_id = a.dept_id AND b.del_flag = '0'
+        WHERE a.del_flag = '0'
+          AND a.status = '0'
+        GROUP BY a.dept_id
+        ORDER BY a.parent_id, a.order_num
+    </select>
+
+</mapper>

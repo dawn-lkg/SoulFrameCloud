@@ -1,0 +1,1 @@
+package com.clm.common.core.domain.entity;

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clm.modules.system.mapper.OperLogMapper">
+
+    <sql id="selectSql">
+        SELECT
+        oper_id, title, business_type, method, request_method, operator_type,
+        oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param,
+        json_result, status, error_msg, oper_time, os, browser, cost_time
+        FROM sys_oper_log
+        <where>
+            <if test="param != null">
+                <if test="param.title != null and param.title != ''">
+                    AND title LIKE CONCAT('%', #{param.title}, '%')
+                </if>
+                <if test="param.operName != null and param.operName != ''">
+                    AND oper_name LIKE CONCAT('%', #{param.operName}, '%')
+                </if>
+                <if test="param.businessType != null">
+                    AND business_type = #{param.businessType}
+                </if>
+                <if test="param.status != null">
+                    AND status = #{param.status}
+                </if>
+                <if test="param.beginTime != null and param.endTime != null">
+                    AND oper_time BETWEEN #{param.beginTime} AND #{param.endTime}
+                </if>
+                <if test="param.beginTime != null and param.endTime == null">
+                    AND oper_time &gt;= #{param.beginTime}
+                </if>
+                <if test="param.beginTime == null and param.endTime != null">
+                    AND oper_time &lt;= #{param.endTime}
+                </if>
+                <if test="param.operIp != null and param.operIp != ''">
+                    AND oper_ip LIKE CONCAT('%', #{param.operIp}, '%')
+                </if>
+                <if test="param.requestMethod!=null and param.requestMethod != ''">
+                    AND request_method = #{param.requestMethod}
+                </if>
+            </if>
+        </where>
+        ORDER BY oper_time DESC
+    </sql>
+
+    <select id="selectOperLogPage" resultType="com.clm.modules.system.domain.vo.OperLogVO">
+        <include refid="selectSql"/>
+    </select>
+    <select id="selectListRel" resultType="com.clm.modules.system.domain.vo.OperLogVO">
+        <include refid="selectSql"/>
+    </select>
+    <select id="getVisitingCount" resultType="Long">
+        SELECT COUNT(DISTINCT concat(oper_ip,user_agent)) from sys_oper_log
+        <where>
+            <!-- 今日访问 -->
+            <if test="param.type==1">
+                AND oper_time >=CURDATE()
+            </if>
+            <!-- 昨日访问 -->
+            <if test="param.type==2">
+                AND oper_time &lt; CURDATE() and oper_time>=DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+            </if>
+            <!-- 本周访问 -->
+            <if test="param.type==3">
+                AND oper_time &lt;= DATE_ADD(CURDATE(),INTERVAL 1 DAY)
+                AND oper_time>=DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+            </if>
+            <!-- 上周访问 -->
+            <if test="param.type==4">
+                AND oper_time >= DATE(DATE_SUB(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 1 WEEK))
+                AND oper_time &lt; DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+            </if>
+            <!-- 本月访问 -->
+            <if test="param.type==5">
+                AND oper_time >= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+                AND oper_time &lt; DATE_FORMAT(CURDATE(), '%Y-%m-01') + INTERVAL 1 MONTH;
+            </if>
+            <!-- 上月访问 -->
+            <if test="param.type==6">
+                AND oper_time >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m-01')
+                AND oper_time &lt; DATE_FORMAT(CURDATE(), '%Y-%m-01')
+            </if>
+        </where>
+    </select>
+    <select id="getVisitingCountRange" resultType="com.clm.modules.system.domain.vo.VisitingRangeDataVO">
+        SELECT
+        time_seq.time AS time,
+        COALESCE(data.count, 0) AS count
+        FROM (
+        SELECT
+        DATE_FORMAT(
+        DATE_ADD(#{param.startTime}, INTERVAL seq.h HOUR),
+        '%H:00'
+        ) AS time,
+        DATE_ADD(#{param.startTime}, INTERVAL seq.h HOUR) AS sort_time
+        FROM (
+        SELECT 0 AS h UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL
+        SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL
+        SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL
+        SELECT 12 UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15 UNION ALL
+        SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18 UNION ALL SELECT 19 UNION ALL
+        SELECT 20 UNION ALL SELECT 21 UNION ALL SELECT 22 UNION ALL SELECT 23
+        ) seq
+        WHERE DATE_ADD(#{param.startTime}, INTERVAL seq.h HOUR) &lt;= #{param.endTime}
+        ) time_seq
+        LEFT JOIN (
+        SELECT
+        DATE_FORMAT(oper_time, '%H:00') AS time,
+        COUNT(DISTINCT CONCAT(oper_ip, user_agent)) AS count
+        FROM sys_oper_log
+        <where>
+            <if test="param.startTime!=null and param.endTime!=null">
+                AND oper_time >= #{param.startTime}
+                AND oper_time &lt;= #{param.endTime}
+            </if>
+        </where>
+        GROUP BY DATE_FORMAT(oper_time, '%H:00')
+        ) data ON time_seq.time = data.time
+        ORDER BY time_seq.sort_time
+    </select>
+
+    <update id="cleanOperLog">
+        TRUNCATE TABLE sys_oper_log
+    </update>
+</mapper> 

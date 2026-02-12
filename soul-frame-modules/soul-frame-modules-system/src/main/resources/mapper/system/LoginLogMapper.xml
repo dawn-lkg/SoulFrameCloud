@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clm.modules.system.mapper.LoginLogMapper">
+    <sql id="selectSql">
+        select info_id, user_name, user_id, ipaddr, login_location, browser, os, status, msg, login_time
+        from sys_login_log
+        <where>
+            <if test="param.ipaddr != null and param.ipaddr != ''">
+                AND ipaddr like concat('%', #{param.ipaddr}, '%')
+            </if>
+            <if test="param.status != null and param.status != ''">
+                AND status = #{param.status}
+            </if>
+            <if test="param.userName != null and param.userName != ''">
+                AND user_name like concat('%', #{param.userName}, '%')
+            </if>
+            <if test="param.beginTime != null and param.beginTime != ''">
+                AND login_time &gt;= #{param.beginTime}
+            </if>
+            <if test="param.endTime != null and param.endTime != ''">
+                AND login_time &lt;= #{param.endTime}
+            </if>
+            <if test="param.userId!=null">
+                AND user_id = #{param.userId}
+            </if>
+        </where>
+        order by login_time desc
+    </sql>
+    
+    <select id="selectLoginLogPage" resultType="com.clm.modules.system.domain.vo.LoginLogVO">
+        <include refid="selectSql"/>
+    </select>
+    
+    <select id="selectLoginLogList" resultType="com.clm.modules.system.domain.vo.LoginLogVO">
+        <include refid="selectSql"/>
+    </select>
+    
+    <update id="cleanLoginLog">
+        truncate table sys_login_log
+    </update>
+</mapper> 

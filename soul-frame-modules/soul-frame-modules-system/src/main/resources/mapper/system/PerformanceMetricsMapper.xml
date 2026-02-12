@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clm.modules.system.mapper.PerformanceMetricsMapper">
+
+    <select id="selectPerformanceMetricsHour" resultType="com.clm.modules.system.domain.vo.PerformanceMetricsHourVO">
+        SELECT
+        DATE_FORMAT(collect_time, '%Y-%m-%d %H:00:00') as `hour`,
+        metric_type,
+        ROUND(AVG(metric_value), 2) as avg_value,
+        MIN(metric_value) as min_value,
+        MAX(metric_value) as max_value,
+        COUNT(*) as `count`
+        FROM performance_metrics
+        <where>
+            <if test="param.metricType != null and param.metricType != ''">
+                AND metric_type = #{param.metricType}
+            </if>
+            AND collect_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        </where>
+        GROUP BY
+        DATE_FORMAT(collect_time, '%Y-%m-%d %H:00:00'),
+        metric_type
+        ORDER BY `hour`
+    </select>
+    <select id="selectPerformanceMetricsDay" resultType="com.clm.modules.system.domain.vo.PerformanceMetricsDayVO">
+        SELECT
+        DATE(collect_time) as `date`,
+        metric_type,
+        ROUND(AVG(metric_value), 2) as avg_value,
+        MIN(metric_value) as min_value,
+        MAX(metric_value) as max_value,
+        COUNT(*) as count
+        FROM performance_metrics
+        <where>
+            <if test="param.metricType != null and param.metricType != ''">
+                AND metric_type = #{param.metricType}
+            </if>
+            <if test="param.beginTime != null and param.beginTime != '' and param.endTime != null and param.endTime != ''">
+                AND DATE(collect_time) BETWEEN #{param.beginTime} AND #{param.endTime}
+            </if>
+        </where>
+        GROUP BY
+        DATE(collect_time),
+        metric_type
+        ORDER BY `date`
+    </select>
+</mapper>

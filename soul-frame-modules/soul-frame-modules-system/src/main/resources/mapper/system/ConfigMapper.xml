@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clm.modules.system.mapper.ConfigMapper">
+
+    <sql id="selectSql">
+        SELECT
+        id,
+        config_name,
+        config_key,
+        config_value,
+        config_type,
+        config_group,
+        config_desc,
+        is_enabled,
+        is_system,
+        sort_order,
+        create_time,
+        update_time,
+        remark
+        FROM sys_config
+        <where>
+            <if test="param != null">
+                <if test="param.id != null">
+                    AND id = #{param.id}
+                </if>
+                <if test="param.configName != null and param.configName != ''">
+                    AND config_name LIKE CONCAT('%', #{param.configName}, '%')
+                </if>
+                <if test="param.configKey != null and param.configKey != ''">
+                    AND config_key LIKE CONCAT('%', #{param.configKey}, '%')
+                </if>
+                <if test="param.configValue != null and param.configValue != ''">
+                    AND config_value LIKE CONCAT('%', #{param.configValue}, '%')
+                </if>
+                <if test="param.configType != null and param.configType != ''">
+                    AND config_type LIKE CONCAT('%', #{param.configType}, '%')
+                </if>
+                <if test="param.configGroup != null and param.configGroup != ''">
+                    AND config_group LIKE CONCAT('%', #{param.configGroup}, '%')
+                </if>
+                <if test="param.configDesc != null and param.configDesc != ''">
+                    AND config_desc LIKE CONCAT('%', #{param.configDesc}, '%')
+                </if>
+                <if test="param.isEnabled != null">
+                    AND is_enabled = #{param.isEnabled}
+                </if>
+                <if test="param.isSystem != null">
+                    AND is_system = #{param.isSystem}
+                </if>
+                <if test="param.sortOrder != null">
+                    AND sort_order = #{param.sortOrder}
+                </if>
+                <if test="param.beginTime != null and param.beginTime != ''">
+                    AND create_time >= #{param.beginTime}
+                </if>
+                <if test="param.endTime != null and param.endTime != ''">
+                    AND create_time &lt;= #{param.endTime}
+                </if>
+            </if>
+            AND del_flag = '0'
+        </where>
+        ORDER BY create_time ASC
+    </sql>
+
+    <select id="selectConfigList" resultType="com.clm.modules.system.domain.vo.ConfigVO">
+        <include refid="selectSql"/>
+    </select>
+    
+    <select id="selectConfigPage" resultType="com.clm.modules.system.domain.vo.ConfigVO">
+        <include refid="selectSql"/>
+    </select>
+</mapper>

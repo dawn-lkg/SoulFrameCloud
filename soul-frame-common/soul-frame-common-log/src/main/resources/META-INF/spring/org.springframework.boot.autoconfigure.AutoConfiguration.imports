@@ -1,0 +1,2 @@
+com.clm.common.log.aspect.LogAspect
+com.clm.common.log.service.AsyncLogService

@@ -1,0 +1,123 @@
+Cursor Rules for soul-frame project
+
+--------------------------------------------------
+总体架构约定
+--------------------------------------------------
+
+- 使用 Spring Boot 3 + Spring Cloud 2023 + Spring Cloud Alibaba 构建微服务体系。
+- 父工程 `pom.xml` 作为统一依赖与版本的唯一来源：
+  - 所有三方库（Spring Boot/Cloud、Spring Cloud Alibaba、sa-token、hutool、fastjson、lombok、mybatis-plus 等）版本号只在父 POM 定义。
+  - 子模块只写 `<groupId>` + `<artifactId>`，不在子模块里重复写 `<version>`。
+- Maven 模块职责（保持该列表与实际模块结构同步，如有增删改请更新本规则）：
+  - `soul-frame-common`：公共能力聚合 POM（core/log/redis/security）。
+  - `soul-frame-common-core`：通用常量、基础实体、Result、工具类等。
+  - `soul-frame-common-log`：日志相关的公共封装（操作日志 AOP 等）。
+  - `soul-frame-common-redis`：Redis 自动配置与工具。
+  - `soul-frame-common-security`：鉴权、权限相关公共能力。
+  - `soul-frame-api`：微服务之间共享的接口契约（Feign 接口 + DTO/VO）。
+  - `soul-frame-api-system`：系统服务对外暴露的 Feign 接口与 DTO/VO。
+  - `soul-frame-gateway`：Spring Cloud Gateway 网关服务。
+  - `soul-frame-modules`：业务微服务聚合 POM。
+  - `soul-frame-modules-system`：系统业务服务（用户、角色、菜单、日志、监控等）。
+  - `soul-frame-test`：用于联调和示例的测试微服务。
+
+
+--------------------------------------------------
+实体、DTO 与持久化（MyBatis-Plus）约定
+--------------------------------------------------
+
+- 严格区分「领域实体」与「跨服务传输对象」：
+  - 业务实体（带数据库表结构、MyBatis-Plus 注解）放在各业务模块中，例如：
+    - `soul-frame-modules-system` 下的 `entity` 包负责映射具体表（User, Role, Menu, OperLog 等）。
+  - DTO/VO 放在 `api` 模块中，例如：
+    - `soul-frame-api-system` 中放 `UserDTO`, `UserInfoDTO`, `OperLogDTO` 等用于跨服务传输的对象。
+- 不在 `soul-frame-api-*` 模块中引入 MyBatis-Plus：
+  - API 模块只作为契约层，不依赖具体 ORM 框架。
+  - 需要通过 MyBatis-Plus 访问数据库时，只在真正访问 DB 的业务模块（例如 `soul-frame-modules-system`）中引入 `mybatis-plus-boot-starter`。
+- 业务模块使用 MyBatis-Plus 的约定：
+  - 实体类使用 `@TableName`、`@TableId` 等注解，仅出现在业务模块。
+  - Mapper 使用 MyBatis-Plus 的 `BaseMapper<T>`，放在相应模块的 `mapper` 包下。
+  - Service 层负责在 `Entity` 与 `DTO/VO` 之间做转换。
+
+
+--------------------------------------------------
+依赖管理与模块依赖规则
+--------------------------------------------------
+
+- 任何新引入的三方依赖，优先在父 POM 的 `<dependencyManagement>` 中声明版本，然后在子模块使用不带版本的依赖引用。
+- 内部模块依赖规则（如未满足请优先调整依赖方向，而不是互相引用）：
+  - `common-*` 模块不依赖业务模块，只提供通用能力。
+  - `api-*` 模块只依赖 `common-core` 等基础模块，不依赖具体业务模块和持久化实现。
+  - 业务模块（如 `soul-frame-modules-system`）可以依赖：
+    - `soul-frame-common-core`
+    - `soul-frame-common-log`
+    - `soul-frame-common-redis`
+    - `soul-frame-common-security`
+    - 对应的 `soul-frame-api-*` 模块
+  - 网关模块 `soul-frame-gateway` 不直接依赖业务模块源码，只通过 HTTP/路由或 Feign 进行交互（如确有必要，只依赖 API 模块）。
+
+
+--------------------------------------------------
+配置中心与服务发现（Nacos）约定
+--------------------------------------------------
+
+- 所有微服务必须配置 `spring.application.name`，作为唯一服务 ID。
+- 所有使用 Feign 的地方，如果通过 `ServiceNameConstants` 来引用服务名，必须保证：
+  - `ServiceNameConstants` 中的常量值与对应服务的 `spring.application.name` 精确一致。
+  - 新增服务时，务必同步更新 `ServiceNameConstants`。
+- Nacos Config 推荐规范（如实际命名变化，请同步更新本段）：
+  - DataId：`${spring.application.name}-${spring.profiles.active}.yml`
+  - Group：`${spring.profiles.active}` 或统一为 `DEFAULT_GROUP`。
+  - Namespace：按环境划分，例如 `dev` / `test` / `prod`。
+- 建议所有服务使用统一的 `spring.config.import: optional:nacos:...` 写法从 Nacos 加载配置。
+
+
+--------------------------------------------------
+网关（Spring Cloud Gateway）与鉴权规则
+--------------------------------------------------
+
+- 网关模块 `soul-frame-gateway` 作为所有外部请求的统一入口。
+- 全局过滤器（如 `AuthFilter`）建议职责：
+  - 解析并校验 Token（sa-token / JWT），对未登录或无权限的请求进行拦截。
+  - 将认证后的用户信息（用户 ID、用户名、角色、租户等）以 Header 或其他方式透传至下游服务。
+  - 记录基础访问日志和 traceId，便于链路追踪。
+- 所有网关路由规则优先配置在 Nacos 配置中心，而不是硬编码在本地配置文件；路由规则发生变化时需更新 Nacos 配置，并在必要时更新本规则说明。
+
+
+--------------------------------------------------
+远程调用（Feign）与返回值规范
+--------------------------------------------------
+
+- Feign 接口统一放在 `soul-frame-api-*` 模块中，不放在业务实现模块里。
+- Feign 接口定义规范：
+  - 必须使用明确的 Spring Web 注解（`@GetMapping`、`@PostMapping`、`@RequestBody`、`@RequestParam` 等）描述 HTTP 契约。
+  - 使用 DTO/VO 作为参数和返回值类型，不直接暴露实体类。
+  - `value` 或 `name` 属性必须引用 `ServiceNameConstants` 中的服务名常量。
+- 返回值统一使用 `Result<T>` 封装：
+  - 控制器与 Feign 接口对外返回统一结构，避免多种返回格式混用。
+
+
+--------------------------------------------------
+日志、操作审计与 AOP 约定
+--------------------------------------------------
+
+- 操作日志相关能力放在 `common-log` 与 `api-system` 中：
+  - `api-system` 中定义操作日志的 DTO/Feign 接口。
+  - 业务模块实现对应接口，负责落库与处理。
+- 统一使用 AOP 记录重要操作日志，而不是在业务代码中手写大量日志逻辑。
+- 新增重要业务场景时，应评估是否需要操作日志记录，若需要则：
+  - 添加/复用相应的注解或 AOP 切点。
+  - 在对应服务中实现必要的日志落库逻辑。
+
+
+--------------------------------------------------
+规则文件维护约定
+--------------------------------------------------
+
+- 本 `.cursorrules` 文件应随着项目结构与规范的调整而及时更新：
+  - 新增/删除 Maven 模块时，更新「总体架构约定」与「依赖管理与模块依赖规则」。
+  - 引入新的基础组件（如缓存中间件、消息队列、搜索引擎）时，补充对应使用规范。
+  - 调整 DTO/Entity 分层策略或 Feign 使用方式时，更新相关约定。
+- 在进行较大规模的重构（例如 Spring Boot → Spring Cloud 化、服务拆分、公共模块提取）后，优先更新本文件，保证后续 AI 辅助开发始终遵守最新规则。
+
+

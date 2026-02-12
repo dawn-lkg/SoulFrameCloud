@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clm.modules.system.mapper.MenuMapper">
+
+    <sql id="Base_Column_List">
+        menu_id
+        , menu_name, parent_id, order_num, path, component, query, is_frame, is_cache,
+        menu_type, visible, status, perms, icon, create_time
+        remark
+    </sql>
+    <delete id="deleteMenuRoleByMenuId">
+        DELETE
+        FROM sys_role_menu
+        WHERE menu_id = #{menuId}
+    </delete>
+
+    <select id="selectMenuVoByUserId" resultType="com.clm.modules.system.domain.vo.MenuVO">
+        SELECT DISTINCT sm.*
+        FROM sys_menu sm
+                 JOIN sys_role_menu srm ON sm.menu_id = srm.menu_id
+                 JOIN sys_user_role sur ON srm.role_id = sur.role_id
+        WHERE sur.user_id = #{userId}
+          and sm.del_flag = '0'
+        ORDER BY sm.parent_id, sm.order_num
+    </select>
+
+    <!-- 查询菜单列表 -->
+    <select id="selectMenuList" resultType="com.clm.modules.system.domain.vo.MenuVO">
+        SELECT
+        menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache,
+        menu_type, visible, status, perms, icon, create_time
+        remark
+        FROM sys_menu
+        <where>
+            <if test="param != null">
+                <if test="param.menuName != null and param.menuName != ''">
+                    AND menu_name LIKE CONCAT('%', #{param.menuName}, '%')
+                </if>
+                <if test="param.status != null and param.status != ''">
+                    AND status = #{param.status}
+                </if>
+                <if test="param.menuType != null and param.menuType != ''">
+                    AND menu_type = #{param.menuType}
+                </if>
+            </if>
+            AND del_flag = '0'
+        </where>
+        ORDER BY parent_id, order_num
+    </select>
+
+    <!-- 根据ID查询菜单 -->
+    <select id="selectMenuById" resultType="com.clm.modules.system.domain.vo.MenuVO">
+        SELECT m.menu_id,
+               m.menu_name,
+               m.parent_id,
+               m.order_num,
+               m.path,
+               m.component,
+               m.query,
+               m.is_frame,
+               m.is_cache,
+               m.menu_type,
+               m.visible,
+               m.status,
+               m.perms,
+               m.icon,
+               m.create_time,
+               m.update_time,
+               m.remark,
+               p.menu_name as parent_name
+        FROM sys_menu m
+                 LEFT JOIN sys_menu p ON m.parent_id = p.menu_id
+        WHERE m.menu_id = #{menuId}
+          AND m.del_flag = '0'
+    </select>
+
+    <!-- 根据角色ID查询菜单树信息 -->
+    <select id="selectMenuListByRoleId" resultType="java.lang.Long">
+        SELECT m.menu_id
+        FROM sys_menu m
+        LEFT JOIN sys_role_menu rm ON m.menu_id = rm.menu_id
+        WHERE rm.role_id = #{roleId}
+        <if test="menuCheckStrictly">
+            AND m.menu_id NOT IN (
+            SELECT m.parent_id FROM sys_menu m INNER JOIN sys_role_menu rm ON m.menu_id = rm.menu_id AND rm.role_id =
+            #{roleId}
+            )
+        </if>
+        ORDER BY m.parent_id, m.order_num
+    </select>
+
+    <!-- 是否存在菜单子节点 -->
+    <select id="hasChildByMenuId" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM sys_menu
+        WHERE parent_id = #{menuId}
+          AND del_flag = '0'
+    </select>
+
+    <!-- 查询菜单使用数量 -->
+    <select id="checkMenuExistRole" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM sys_role_menu
+        WHERE menu_id = #{menuId}
+    </select>
+
+    <select id="getPermissionsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT p.perms
+        FROM sys_menu p
+                 LEFT JOIN sys_role_menu rp ON p.menu_id = rp.menu_id
+                 LEFT JOIN sys_user_role ur ON rp.role_id = ur.role_id
+                 LEFT JOIN sys_user u ON ur.user_id = u.user_id
+        WHERE u.user_id = #{userId}
+          AND p.del_flag = '0'
+          AND p.status = '0'
+          AND p.menu_type = 'F'
+    </select>
+
+    <!-- 根据用户ID查询权限列表 -->
+    <select id="selectPermsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT m.perms
+        FROM sys_menu m
+                 LEFT JOIN
+             sys_role_menu rm ON m.menu_id = rm.menu_id
+                 LEFT JOIN
+             sys_user_role ur ON rm.role_id = ur.role_id
+        WHERE m.del_flag = '0'
+          AND m.status = '0'
+          AND m.perms IS NOT NULL
+          AND m.perms != ''
+            AND ur.user_id = #{userId}
+    </select>
+
+    <!-- 根据菜单ID查询关联的角色ID列表 -->
+    <select id="selectRoleIdsByMenuId" resultType="java.lang.Long">
+        SELECT DISTINCT rm.role_id
+        FROM sys_role_menu rm
+                 LEFT JOIN
+             sys_role r ON r.role_id = rm.role_id
+        WHERE r.del_flag = '0'
+          AND r.status = '0'
+          AND rm.menu_id = #{menuId}
+    </select>
+</mapper>
+

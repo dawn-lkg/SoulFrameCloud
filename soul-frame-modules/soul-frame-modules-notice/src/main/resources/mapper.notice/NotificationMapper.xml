@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clm.system.mapper.NotificationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.clm.system.domain.entity.Notification">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="user_id" property="userId"/>
+        <result column="read" property="read"/>
+        <result column="color" property="color"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <!-- 通知视图对象映射结果 -->
+    <resultMap id="NotificationVOMap" type="com.clm.system.domain.vo.NotificationVO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="read" property="read"/>
+        <result column="color" property="color"/>
+        <result column="create_time" property="time"/>
+    </resultMap>
+
+    <!-- 获取当前用户的通知分页列表 -->
+    <select id="selectNotificationPage" resultMap="NotificationVOMap">
+        SELECT
+        id, title, content, type, `read`, color, create_time
+        FROM
+        sys_notification
+        WHERE
+        user_id = #{userId}
+        AND del_flag = 0
+        <if test="title != null and title != ''">
+            AND title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        <if test="read != null">
+            AND `read` = #{read}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <!-- 获取当前用户的未读通知数量 -->
+    <select id="selectUnreadCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM sys_notification
+        WHERE user_id = #{userId}
+          AND `read` = 0
+          AND del_flag = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.clm.modules.notice.mapper.TodoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.clm.modules.notice.domain.entity.Todo">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="deadline" property="deadline"/>
+        <result column="status" property="status"/>
+        <result column="priority" property="priority"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <result column="del_flag" property="delFlag"/>
+    </resultMap>
+
+    <!-- 待办事项视图对象映射结果 -->
+    <resultMap id="TodoVOMap" type="com.clm.modules.notice.domain.vo.TodoVO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="deadline" property="deadline"/>
+        <result column="status" property="status"/>
+        <result column="priority" property="priority"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 获取当前用户的待办事项分页列表 -->
+    <select id="selectTodoPage" resultMap="TodoVOMap">
+        SELECT
+        id, title, content, deadline, status, priority, create_time
+        FROM
+        sys_todo
+        WHERE
+        user_id = #{userId}
+        AND del_flag = 0
+        <if test="title != null and title != ''">
+            AND title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="priority != null and priority != ''">
+            AND priority = #{priority}
+        </if>
+        ORDER BY
+        CASE
+        WHEN status = 'pending' THEN 1
+        WHEN status = 'overdue' THEN 2
+        WHEN status = 'completed' THEN 3
+        ELSE 4
+        END,
+        CASE
+        WHEN priority = 'high' THEN 1
+        WHEN priority = 'medium' THEN 2
+        WHEN priority = 'low' THEN 3
+        ELSE 4
+        END,
+        deadline ASC
+    </select>
+
+    <!-- 获取当前用户的待处理待办事项数量 -->
+    <select id="selectPendingCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM sys_todo
+        WHERE user_id = #{userId}
+          AND status = 'pending'
+          AND del_flag = 0
+    </select>
+
+    <!-- 更新已过期的待办事项状态 -->
+    <update id="updateOverdueTodos">
+        UPDATE
+            sys_todo
+        SET status      = 'overdue',
+            update_time = NOW()
+        WHERE status = 'pending'
+          AND deadline &lt; NOW()
+          AND del_flag = 0
+    </update>
+
+</mapper>

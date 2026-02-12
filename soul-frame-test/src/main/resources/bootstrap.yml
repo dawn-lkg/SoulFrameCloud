@@ -1,0 +1,12 @@
+server:
+  port: 9991
+spring:
+  application:
+      name: soul-frame-test
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        import-check:
+          enabled: false
