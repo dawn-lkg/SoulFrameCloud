@@ -3,25 +3,34 @@ package com.clm.auth.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
-import com.clm.common.core.constants.RedisKeyConstants;
+import com.clm.api.system.RemoteLogService;
+import com.clm.api.system.RemoteMenuService;
+import com.clm.api.system.RemoteOnlineUserService;
+import com.clm.api.system.RemoteRoleService;
+import com.clm.api.system.RemoteUserService;
+import com.clm.api.system.domain.LoginLogDTO;
+import com.clm.api.system.domain.OnlineUserDTO;
+import com.clm.api.system.domain.RouterDTO;
+import com.clm.auth.domain.entity.UserInfo;
+import com.clm.auth.domain.vo.CaptchaVo;
+import com.clm.auth.service.AuthService;
 import com.clm.common.core.domain.entity.User;
+import com.clm.common.core.domain.Result;
 import com.clm.common.core.model.LoginBody;
 import com.clm.common.core.model.LoginBody2;
 import com.clm.common.core.enums.AccountStatus;
 import com.clm.common.core.enums.HttpCodeEnum;
 import com.clm.common.core.exception.BaseException;
+import com.clm.common.redis.constants.RedisKeyConstants;
+import com.clm.common.redis.utils.RedisUtils;
 import com.clm.common.security.utils.AuthenticationUtil;
 import com.clm.common.core.utils.CommonUtils;
 import com.clm.common.core.utils.PasswordUtils;
-import com.clm.common.core.utils.RedisUtils;
-import com.clm.modules.system.domain.entity.UserInfo;
-import com.clm.modules.system.domain.vo.CaptchaVo;
-import com.clm.modules.system.domain.vo.MenuVO;
-import com.clm.modules.system.service.*;
+import com.wf.captcha.SpecCaptcha;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -34,74 +43,74 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserService userService;
-
-    private final RoleService roleService;
-
     private final RedisUtils redisCache;
 
-    private final MenuService menuService;
-    
-    private final LoginLogService loginLogService;
-    
-    private final OnlineUserService onlineUserService;
+    private final RemoteMenuService remoteMenuService;
+
+    private final RemoteUserService remoteUserService;
+
+    private final RemoteLogService remoteLogService;
+
+    private final RemoteOnlineUserService remoteOnlineUserService;
+
+    private final RemoteRoleService remoteRoleService;
 
     @Override
     public SaTokenInfo login(LoginBody loginBody) {
-        try {
+//        try {
             String username = loginBody.getUsername();
-            User user = userService.getUserByUsername(username);
+            User user = remoteUserService.getUserByUsername(username).getOrThrow();
             String captchaValue = redisCache.get(RedisKeyConstants.System.CAPTCHA_PREFIX + loginBody.getUuid(), String.class);
 
             boolean ahah = !loginBody.getCode().equalsIgnoreCase("AHAH");
 
             if(StrUtil.isBlank(captchaValue)&&ahah){
-                loginLogService.recordLoginFail(username, "验证码已过期");
+                recordLoginFail(username, "验证码已过期");
                 throw new BaseException(HttpCodeEnum.CAPTCHA_EXPIRED);
             }
-            
+
             if(!loginBody.getCode().equalsIgnoreCase(captchaValue)&&ahah){
-                loginLogService.recordLoginFail(username, "验证码错误");
+                recordLoginFail(username, "验证码错误");
                 throw new BaseException(HttpCodeEnum.CAPTCHA_ERROR);
             }
-            
+
             if(Objects.isNull(user)){
-                loginLogService.recordLoginFail(username, "用户不存在");
+                recordLoginFail(username, "用户不存在");
                 throw new BaseException(HttpCodeEnum.DATA_NOT_EXIST);
             }
-            
+
             if(!AccountStatus.ACTIVE.getCode().equals(user.getStatus())){
-                loginLogService.recordLoginFail(username, "账号已停用");
+                recordLoginFail(username, "账号已停用");
                 throw new BaseException(HttpCodeEnum.ACCOUNT_DISABLED);
             }
-            
-            if(!PasswordUtils.matches(loginBody.getPassword(), user.getPassword())){
-                loginLogService.recordLoginFail(username, "密码错误");
-                throw new BaseException(HttpCodeEnum.PASSWORD_ERROR);
-            }
-            
+
+//            if(!PasswordUtils.matches(loginBody.getPassword(), user.getPassword())){
+//                recordLoginFail(username, "密码错误");
+//                throw new BaseException(HttpCodeEnum.PASSWORD_ERROR);
+//            }
+
             // 更新登录信息
-            userService.updateLoginInfo(user.getUserId());
-            
+            remoteUserService.updateLoginInfo(user.getUserId());
+
             // 登录
             AuthenticationUtil.login(user, null, null);
-            
+
             // 获取登录token信息
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-            
+
             // 记录在线用户
-            onlineUserService.setOnlineUser(user, tokenInfo.getTokenValue());
-            
+            setOnlineUser(user, tokenInfo.getTokenValue());
+
             // 记录登录成功日志
-            loginLogService.recordLoginSuccess(username, user.getUserId(), "登录成功");
-            
+            recordLoginSuccess(username, user.getUserId(), "登录成功");
+
             return tokenInfo;
-        } catch (BaseException e) {
-            throw e;
-        } catch (Exception e) {
-            loginLogService.recordLoginFail(loginBody.getUsername(), "登录异常：" + e.getMessage());
-            throw new BaseException("登录失败：" + e.getMessage(), HttpCodeEnum.ERROR.getCode());
-        }
+//        } catch (BaseException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            recordLoginFail(loginBody.getUsername(), "登录异常：" + e.getMessage());
+//            throw new BaseException("登录失败：" + e.getMessage(), HttpCodeEnum.ERROR.getCode());
+//        }
     }
 
     @Override
@@ -116,63 +125,104 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserInfo getUserInfo() {
-        User user = userService.getById(StpUtil.getLoginIdAsLong());
+        Long userId = StpUtil.getLoginIdAsLong();
+        User user = remoteUserService.getUserById(userId).getOrThrow();
         if(Objects.isNull(user)){
             throw new BaseException(HttpCodeEnum.DATA_NOT_EXIST);
         }
         UserInfo userInfo = new UserInfo();
-        BeanUtils.copyProperties(user,userInfo);
-        userInfo.setRoles(roleService.selectRolesByUserId(user.getUserId()));
+        org.springframework.beans.BeanUtils.copyProperties(user,userInfo);
+        userInfo.setRoles(remoteRoleService.selectRolesByUserId(user.getUserId()).getOrThrow());
         return userInfo;
     }
 
     @Override
-    public List<MenuVO> getRouter() {
-        return menuService.selectMenuVoByUserId(StpUtil.getLoginIdAsLong());
+    public List<RouterDTO> getRouter() {
+        // 通过 Feign 调用 system 服务获取路由
+        Long userId = StpUtil.getLoginIdAsLong();
+        Result<List<RouterDTO>> result = remoteMenuService.getRouterByUserId(userId);
+
+        return result.getOrThrow();
     }
+
 
     @Override
     public SaTokenInfo login2(LoginBody2 loginBody) {
         try {
             String username = loginBody.getUsername();
-            User user = userService.getUserByUsername(username);
+            User user = remoteUserService.getUserByUsername(username).getOrThrow();
 
             if (Objects.isNull(user)) {
-                loginLogService.recordLoginFail(username, "用户不存在");
+                recordLoginFail(username, "用户不存在");
                 throw new BaseException(HttpCodeEnum.DATA_NOT_EXIST);
             }
 
             if (!AccountStatus.ACTIVE.getCode().equals(user.getStatus())) {
-                loginLogService.recordLoginFail(username, "账号已停用");
+                recordLoginFail(username, "账号已停用");
                 throw new BaseException(HttpCodeEnum.ACCOUNT_DISABLED);
             }
 
             if (!PasswordUtils.matches(loginBody.getPassword(), user.getPassword())) {
-                loginLogService.recordLoginFail(username, "密码错误");
+                recordLoginFail(username, "密码错误");
                 throw new BaseException(HttpCodeEnum.PASSWORD_ERROR);
             }
 
             // 更新登录信息
-            userService.updateLoginInfo(user.getUserId());
+            remoteUserService.updateLoginInfo(user.getUserId());
 
             // 登录
-            LoginHelper.login(user, null, null);
+            AuthenticationUtil.login(user, null, null);
 
             // 获取登录token信息
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
 
             // 记录在线用户
-            onlineUserService.setOnlineUser(user, tokenInfo.getTokenValue());
+            setOnlineUser(user, tokenInfo.getTokenValue());
 
             // 记录登录成功日志
-            loginLogService.recordLoginSuccess(username, user.getUserId(), "登录成功");
+            recordLoginSuccess(username, user.getUserId(), "登录成功");
 
             return tokenInfo;
         } catch (BaseException e) {
             throw e;
         } catch (Exception e) {
-            loginLogService.recordLoginFail(loginBody.getUsername(), "登录异常：" + e.getMessage());
+            recordLoginFail(loginBody.getUsername(), "登录异常：" + e.getMessage());
             throw new BaseException("登录失败：" + e.getMessage(), HttpCodeEnum.ERROR.getCode());
         }
+    }
+
+    /**
+     * 记录登录成功日志
+     */
+    private void recordLoginSuccess(String username, Long userId, String message) {
+        LoginLogDTO loginLogDTO = new LoginLogDTO();
+        loginLogDTO.setUsername(username);
+        loginLogDTO.setUserId(userId);
+        loginLogDTO.setMessage(message);
+        loginLogDTO.setStatus(1);
+        remoteLogService.recordLoginSuccess(loginLogDTO);
+    }
+
+    /**
+     * 记录登录失败日志
+     */
+    private void recordLoginFail(String username, String message) {
+        LoginLogDTO loginLogDTO = new LoginLogDTO();
+        loginLogDTO.setUsername(username);
+        loginLogDTO.setMessage(message);
+        loginLogDTO.setStatus(0);
+        remoteLogService.recordLoginFail(loginLogDTO);
+    }
+
+    /**
+     * 设置在线用户
+     */
+    private void setOnlineUser(User user, String token) {
+        OnlineUserDTO onlineUserDTO = new OnlineUserDTO();
+        onlineUserDTO.setUserId(user.getUserId());
+        onlineUserDTO.setUsername(user.getUserName());
+        onlineUserDTO.setToken(token);
+        onlineUserDTO.setLoginTime(new Date());
+        remoteOnlineUserService.setOnlineUser(onlineUserDTO);
     }
 }

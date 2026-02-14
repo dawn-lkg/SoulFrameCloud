@@ -69,7 +69,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-            <version>${easyexcel.version}</version>
         </dependency>
 
         <dependency>
@@ -94,17 +93,23 @@
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
-
         <!-- 日志模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-log</artifactId>
         </dependency>
+
+        <!-- Redis模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-redis</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-api-system</artifactId>
         </dependency>
 
 

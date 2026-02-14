@@ -10,7 +10,7 @@ public class ServiceNameConstants {
     /**
      * 系统模块的serviceId
      */
-    public static final String SYSTEM_SERVICE = "soul-frame-system";
+    public static final String SYSTEM_SERVICE = "soul-frame-modules-system";
 
     /**
      * 文件模块的serviceId

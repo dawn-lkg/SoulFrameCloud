@@ -6,6 +6,7 @@ import com.clm.common.core.domain.BasePageParam;
 import com.clm.common.core.domain.Result;
 import com.clm.common.log.annotation.Log;
 import com.clm.common.log.enums.BusinessType;
+import com.clm.modules.system.domain.entity.LoginLog;
 import com.clm.modules.system.domain.param.LoginLogQueryParam;
 import com.clm.modules.system.domain.vo.LoginLogVO;
 import com.clm.modules.system.service.LoginLogService;
@@ -81,5 +82,19 @@ public class LoginLogController extends BaseController {
     @Log(businessType = BusinessType.QUERY)
     public Result<IPage<LoginLogVO>> current(BasePageParam param) {
         return success(loginLogService.getCurrentUserLoginLog(param));
+    }
+
+    @Operation(summary = "记录登录成功日志")
+    @PostMapping("/success")
+    public Result<Void> recordLoginSuccess(@RequestBody LoginLog loginLog) {
+        loginLogService.recordLoginSuccess(loginLog.getUserName(), loginLog.getUserId(), loginLog.getMsg());
+        return Result.success();
+    }
+
+    @Operation(summary = "记录登录失败日志")
+    @PostMapping("/fail")
+    public Result<Void> recordLoginFail(@RequestBody LoginLog loginLog) {
+        loginLogService.recordLoginFail(loginLog.getUserName(), loginLog.getMsg());
+        return Result.success();
     }
 } 

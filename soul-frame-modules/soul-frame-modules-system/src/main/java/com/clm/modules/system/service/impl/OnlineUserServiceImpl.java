@@ -1,6 +1,5 @@
 package com.clm.modules.system.service.impl;
 
-import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
 import com.clm.common.core.domain.entity.User;
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 public class OnlineUserServiceImpl implements OnlineUserService {
 
     private final RedisUtils redisUtils;
-    private final SaTokenDao saTokenDao;
     
     @Value("${ip.xdbPath}")
     private String xdbPath;

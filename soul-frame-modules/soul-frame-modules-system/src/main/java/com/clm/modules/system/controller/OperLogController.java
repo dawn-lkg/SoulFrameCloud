@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/system/operLog")
 @RequiredArgsConstructor
-public class OperLogController extends BaseController implements RemoteLogService {
+public class OperLogController extends BaseController {
 
     private final OperLogService operLogService;
 
@@ -88,14 +88,7 @@ public class OperLogController extends BaseController implements RemoteLogServic
         return success(operLogService.getVisitingStatistic());
     }
 
-    /**
-     * 远程调用：保存操作日志（实现 Feign 接口）
-     *
-     * @param operLogDTO 操作日志 DTO
-     * @return 结果
-     */
-    @Override
-    @PostMapping("/oper-log")
+    @PostMapping()
     public Result<Boolean> insertOperLog(@RequestBody OperLogDTO operLogDTO) {
         // DTO 转 Entity
         OperLog operLog = new OperLog();

@@ -1,7 +1,7 @@
 
 spring:
   application:
-      name: soul-frame-system
+      name: soul-frame-modules-system
   profiles:
     active: dev
   config:

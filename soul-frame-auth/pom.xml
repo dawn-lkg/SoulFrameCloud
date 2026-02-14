@@ -11,15 +11,65 @@
     <description>soul-frame-auth</description>
 
     <dependencies>
+
+        <!-- SpringCloud Alibaba Nacos -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- SpringCloud Alibaba Nacos Config -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-log</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-api-system</artifactId>
+        </dependency>
+
+        <!-- 图形验证码 -->
+        <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+        </dependency>
+
+        <!-- 负载均衡 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <dependency>

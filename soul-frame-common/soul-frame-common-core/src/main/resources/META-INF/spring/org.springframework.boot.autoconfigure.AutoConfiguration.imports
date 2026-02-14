@@ -1,1 +1,1 @@
-com.clm.common.core.config.AuthConfig
+com.clm.common.core.config.JacksonConfiguration

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -71,8 +72,8 @@ public class RedisConfig extends CachingConfigurerSupport {
                 ObjectMapper.DefaultTyping.NON_FINAL,
                 JsonTypeInfo.As.PROPERTY);
 
-        // 处理Java 8日期时间API
-//        mapper.registerModule(new JavaTimeModule());
+        // 处理Java8日期时间API
+        mapper.registerModule(new JavaTimeModule());
 
         // 忽略未知属性
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -101,7 +102,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 
         // 处理Java 8日期时间API
-//        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(new JavaTimeModule());
 
         // 忽略未知属性
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

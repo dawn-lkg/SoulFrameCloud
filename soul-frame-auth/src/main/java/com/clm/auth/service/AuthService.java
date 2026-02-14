@@ -1,11 +1,11 @@
 package com.clm.auth.service;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
+import com.clm.api.system.domain.RouterDTO;
+import com.clm.auth.domain.entity.UserInfo;
+import com.clm.auth.domain.vo.CaptchaVo;
 import com.clm.common.core.model.LoginBody;
 import com.clm.common.core.model.LoginBody2;
-import com.clm.modules.system.domain.entity.UserInfo;
-import com.clm.modules.system.domain.vo.CaptchaVo;
-import com.clm.modules.system.domain.vo.MenuVO;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public interface AuthService {
      * 获取路由
      * @return 路由
      */
-    List<MenuVO> getRouter();
+    List<RouterDTO> getRouter();
 
     /**
      * 无验证码登录

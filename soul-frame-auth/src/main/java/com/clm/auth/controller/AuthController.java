@@ -2,16 +2,16 @@ package com.clm.auth.controller;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
+import com.clm.api.system.domain.RouterDTO;
+import com.clm.auth.domain.entity.UserInfo;
+import com.clm.auth.domain.vo.CaptchaVo;
+import com.clm.auth.service.AuthService;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
 import com.clm.common.core.model.LoginBody;
 import com.clm.common.core.model.LoginBody2;
 import com.clm.common.log.annotation.Log;
 import com.clm.common.log.enums.BusinessType;
-import com.clm.modules.system.domain.entity.UserInfo;
-import com.clm.modules.system.domain.vo.CaptchaVo;
-import com.clm.modules.system.domain.vo.MenuVO;
-import com.clm.modules.system.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -68,7 +68,7 @@ public class AuthController extends BaseController {
     @Operation(summary = "获取用户菜单权限")
     @Log(businessType = BusinessType.QUERY)
     @GetMapping("/getRouters")
-    public Result<List<MenuVO>> getRouter(){
+    public Result<List<RouterDTO>> getRouter(){
         return success(authService.getRouter());
     }
 

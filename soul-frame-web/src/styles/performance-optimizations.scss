@@ -1,0 +1,133 @@
+// 性能优化样式配置
+// 此文件包含全局性能优化规则
+
+// 1. 为频繁变化的元素启用 GPU 加速
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+// 2. 优化滚动性能
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+// 3. 减少重绘和重排
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+// 4. 禁用不必要的动画（在低性能设备上）
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// 5. 优化表格渲染性能
+.ant-table {
+  // 使用 contain 属性优化渲染
+  contain: layout style paint;
+  
+  .ant-table-tbody {
+    // 优化表格行渲染
+    > tr {
+      contain: layout style;
+    }
+  }
+}
+
+// 6. 优化模态框和抽屉的性能
+.ant-modal,
+.ant-drawer {
+  // 使用硬件加速
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+// 7. 优化下拉菜单性能
+.ant-dropdown,
+.ant-select-dropdown {
+  // 使用硬件加速
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+// 8. 优化按钮交互性能
+.ant-btn {
+  // 只在需要时使用 will-change
+  &:hover,
+  &:focus {
+    will-change: transform, box-shadow;
+  }
+  
+  &:not(:hover):not(:focus) {
+    will-change: auto;
+  }
+}
+
+// 9. 优化卡片渲染
+.ant-card {
+  contain: layout style;
+  
+  &:hover {
+    will-change: box-shadow;
+  }
+  
+  &:not(:hover) {
+    will-change: auto;
+  }
+}
+
+// 10. 优化输入框性能
+.ant-input,
+.ant-input-number,
+.ant-select-selector {
+  // 减少重绘
+  contain: layout style;
+}
+
+// 11. 优化图片加载
+img {
+  // 使用浏览器原生懒加载
+  loading: lazy;
+  // 解码优化
+  decoding: async;
+}
+
+// 12. 优化字体渲染
+body {
+  // 优化文本渲染
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 13. 优化阴影性能（使用 filter 代替 box-shadow 在某些情况下）
+.optimized-shadow {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+}
+
+// 14. 优化边框渲染
+.optimized-border {
+  // 使用 outline 代替 border 避免重排
+  outline: 1px solid var(--border-color);
+  outline-offset: -1px;
+}
+
+// 15. 优化背景渲染
+.optimized-background {
+  // 使用 background-attachment: fixed 时的优化
+  background-attachment: scroll;
+}

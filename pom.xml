@@ -33,6 +33,7 @@
         <druid.version>1.2.16</druid.version>
         <mybatis.version>8.0.33</mybatis.version>
         <mysql.version>8.0.33</mysql.version>
+        <commons-pool2.version>2.11.1</commons-pool2.version>
     </properties>
 
     <modules>
@@ -163,12 +164,6 @@
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-spring-boot3-starter</artifactId>
                 <version>${sa-token.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-web</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!-- sa-token -->
@@ -189,6 +184,34 @@
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-spring-aop</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+
+            <!-- Sa-Token 整合 Redis （使用 jackson 序列化方式） -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-redis-jackson</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+
+            <!-- Sa-Token Servlet 支持（用于 Servlet 环境） -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-servlet</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+
+            <!-- commons-pool2 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${commons-pool2.version}</version>
+            </dependency>
+
+            <!-- Sa-Token 兼容 Spring WebFlux -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
 

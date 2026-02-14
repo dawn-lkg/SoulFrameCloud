@@ -1,5 +1,6 @@
 package com.clm.modules.system.controller;
 
+import com.clm.api.system.domain.OnlineUserDTO;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
 import com.clm.common.log.annotation.Log;
@@ -72,5 +73,15 @@ public class OnlineUserController extends BaseController {
     public SseEmitter sse() {
         String username = AuthenticationUtil.getUsername();
         return sseTemplate.connect(SseConstant.ONLINE_USER_EVENT, username);
+    }
+
+    @Operation(summary = "设置在线用户")
+    @PostMapping
+    public Result<Void> setOnlineUser(@RequestBody OnlineUserDTO onlineUserDTO) {
+        com.clm.common.core.domain.entity.User user = new com.clm.common.core.domain.entity.User();
+        user.setUserId(onlineUserDTO.getUserId());
+        user.setUserName(onlineUserDTO.getUsername());
+        onlineUserService.setOnlineUser(user, onlineUserDTO.getToken());
+        return Result.success();
     }
 } 

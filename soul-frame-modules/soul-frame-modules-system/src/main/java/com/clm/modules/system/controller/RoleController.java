@@ -1,6 +1,8 @@
 package com.clm.modules.system.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.clm.api.system.domain.RoleSimpleDTO;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
 import com.clm.common.core.domain.entity.Role;
@@ -8,6 +10,7 @@ import com.clm.common.log.annotation.Log;
 import com.clm.common.log.enums.BusinessType;
 import com.clm.modules.system.domain.dto.RoleDTO;
 import com.clm.modules.system.domain.param.RoleQueryParam;
+import com.clm.modules.system.domain.vo.RoleSimpleVO;
 import com.clm.modules.system.domain.vo.RoleVO;
 import com.clm.modules.system.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -132,6 +135,14 @@ public class RoleController extends BaseController {
     @GetMapping("/{roleId}/menu")
     public Result<List<Long>> getRoleMenu(@Schema(description = "角色ID") @PathVariable("roleId") Long roleId) {
         return success(roleService.getPermissionIdsByRoleId(roleId));
+    }
+
+    @Log
+    @Operation(summary = "根据用户ID查询角色列表")
+    @GetMapping("/user/{userId}")
+    public Result<List<RoleSimpleDTO>> selectRolesByUserId(@Schema(description = "用户ID") @PathVariable("userId") Long userId) {
+        List<RoleSimpleVO> roleSimpleVOS = roleService.selectRolesByUserId(userId);
+        return success(BeanUtil.copyToList(roleSimpleVOS, RoleSimpleDTO.class));
     }
 }
 

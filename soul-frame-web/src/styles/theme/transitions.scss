@@ -1,0 +1,98 @@
+// 全局过渡动画样式 - 性能优化版本
+@use '../variables' as *;
+
+// 淡入淡出 - 优化版
+.fade {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+  }
+}
+
+// 淡入淡出并滑动 - 优化版
+.fade-slide {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+// 缩放 - 优化版
+.scale {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+// 上滑入场 - 优化版
+.slide-down {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &-enter-from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  &-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+// 下滑入场 - 优化版
+.slide-up {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &-enter-from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  &-leave-to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+// 抽屉效果 - 优化版
+.drawer {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+} 

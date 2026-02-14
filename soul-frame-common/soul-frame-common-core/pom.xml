@@ -18,16 +18,13 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-        <!-- Spring Web -->
+        <!-- Spring Web (仅保留 API，不含自动配置) -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
+    
         <!-- Spring Context Support -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -46,25 +43,22 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- hutool -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
 
+        <!-- fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
 
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-        </dependency>
-
-        <!-- Servlet -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <!-- API文档 -->
@@ -77,37 +71,37 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <optional>true</optional>
         </dependency>
 
-        <!-- satoken-core  -->
+        <!-- tomcat -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-core</artifactId>
         </dependency>
 
-        <!-- sa-token -->
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-spring-boot3-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-web</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <!-- Sa-Token 整合 jwt -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-jwt</artifactId>
         </dependency>
 
-        <!-- Sa-Token 整合 Spring AOP -->
-        <dependency>
-            <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-spring-aop</artifactId>
-        </dependency>
 
     </dependencies>
 

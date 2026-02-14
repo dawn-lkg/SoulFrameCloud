@@ -1,0 +1,188 @@
+// 菜单组件通用样式
+@use '../variables' as *;
+
+// 菜单过渡动画
+.menu-transition {
+  &-enter-active,
+  &-leave-active {
+    transition: all 0.3s ease;
+  }
+
+  &-enter-from,
+  &-leave-to {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+// 菜单项基础样式
+.menu-item-base {
+  border-radius: 8px;
+  height: 40px;
+  line-height: 40px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  margin: 4px 8px;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  // 左侧指示条
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 0;
+    border-radius: 0 2px 2px 0;
+    background-color: var(--ant-primary-color, $primary-color);
+    transition: height 0.3s;
+  }
+
+  // 悬浮背景
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--ant-primary-1, rgba($primary-color, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    z-index: -1;
+  }
+
+  &:hover {
+    background-color: transparent;
+
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+// 菜单项文本样式
+.menu-text, .menu-name {
+  user-select: none;
+  transition: color 0.3s ease;
+  margin-left: 2px;
+  font-size: 14px;
+}
+
+// 菜单项图标样式
+.menu-icon {
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  font-size: 18px;
+
+  &:hover {
+    transform: scale(1.15);
+    color: var(--ant-primary-color, $primary-color);
+  }
+}
+
+// 选中菜单项样式
+.menu-item-selected {
+  background-color: var(--ant-primary-1, rgba($primary-color, 0.08)) !important;
+
+  &::before {
+    height: 16px;
+  }
+
+  .menu-text {
+    color: var(--ant-primary-color, $primary-color);
+    font-weight: 400;
+  }
+
+  .menu-icon {
+    color: var(--ant-primary-color, $primary-color);
+  }
+
+  &.menu-item-base {
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.03);
+  }
+}
+
+// 子菜单样式
+.submenu-item {
+  padding-left: 8px !important;
+}
+
+.submenu-content {
+  background: transparent;
+  padding-left: 8px;
+}
+
+// 暗色主题菜单
+.menu-dark {
+  background: linear-gradient(to bottom, #1e2033, #13151f);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+
+  .menu-item-base {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    &::before {
+      background-color: rgba(64, 158, 255, 0.15);
+    }
+  }
+
+  .menu-text {
+    &:hover {
+      color: #409eff;
+      opacity: 0.9;
+    }
+  }
+
+  .menu-item-selected {
+    background-color: rgba(64, 158, 255, 0.1) !important;
+
+    &::before {
+      background-color: #409eff;
+    }
+
+    .menu-text {
+      color: #409eff;
+    }
+
+    .menu-icon {
+      color: #409eff;
+    }
+
+    &.menu-item-base {
+      box-shadow: 0 0 10px 1px rgba(64, 158, 255, 0.15);
+    }
+  }
+
+  .submenu-content {
+    background: rgba(0, 0, 0, 0.15);
+  }
+}
+
+// 自定义滚动条样式
+.custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &.dark {
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+} 

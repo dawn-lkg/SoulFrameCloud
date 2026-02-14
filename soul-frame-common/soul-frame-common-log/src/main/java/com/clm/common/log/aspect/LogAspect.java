@@ -47,7 +47,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class LogAspect {
 
-    @Value("${ip.xdbPath}")
+    @Value("${ip.xdbPath:default}")
     private String xdbPath;
 
     /** 计算操作消耗时间 */
@@ -98,8 +98,14 @@ public class LogAspect {
     protected void handleLog(JoinPoint joinPoint, Log controllerLog, Exception e, Object result) {
         try {
             // 获取当前登录用户
-            Long userId = StpUtil.getLoginIdAsLong();
-            LoginUser loginUser = AuthenticationUtil.getLoginUser();
+
+            Long userId =0L;
+            LoginUser loginUser = null;
+            if(StpUtil.isLogin()){
+                userId = StpUtil.getLoginIdAsLong();
+                loginUser=AuthenticationUtil.getLoginUser();
+            }
+
 
             // 构建操作日志对象
             OperLogDTO operLog = new OperLogDTO();
@@ -127,8 +133,9 @@ public class LogAspect {
             // 记录操作人和部门
             if (loginUser != null) {
                 operLog.setOperName(loginUser.getUsername());
-                // TODO: 获取部门名称
                 // operLog.setDeptName(user.getDeptName());
+            }else {
+                operLog.setOperName("匿名用户");
             }
 
             // 记录IP和地理位置

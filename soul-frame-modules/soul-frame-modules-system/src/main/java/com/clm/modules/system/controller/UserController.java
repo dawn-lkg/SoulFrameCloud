@@ -137,5 +137,18 @@ public class UserController extends BaseController {
     public Result<List<UserSelectVO>> select(@Valid UserQueryParam param) {
         return success(userService.getSelectUserList(param));
     }
+
+    @Operation(summary = "更新用户登录信息")
+    @PutMapping("/login-info/{userId}")
+    public Result<Void> updateLoginInfo(@PathVariable("userId") Long userId) {
+        userService.updateLoginInfo(userId);
+        return Result.success();
+    }
+
+    @Operation(summary = "获取用户实体")
+    @GetMapping("/entity/{userId}")
+    public Result<User> getUserById(@PathVariable("userId") Long userId) {
+        return success(userService.getById(userId));
+    }
 }
 

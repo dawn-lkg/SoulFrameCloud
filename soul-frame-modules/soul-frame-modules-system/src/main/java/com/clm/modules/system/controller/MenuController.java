@@ -1,10 +1,12 @@
 package com.clm.modules.system.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
 import com.clm.common.core.utils.TreeUtils;
 import com.clm.common.log.annotation.Log;
 import com.clm.common.log.enums.BusinessType;
+import com.clm.api.system.domain.RouterDTO;
 import com.clm.modules.system.domain.dto.MenuDTO;
 import com.clm.modules.system.domain.param.MenuQueryParam;
 import com.clm.modules.system.domain.vo.MenuVO;
@@ -18,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 菜单权限表(Menu)表控制层
@@ -89,6 +92,17 @@ public class MenuController extends BaseController {
     @GetMapping("/check-name-unique")
     public Result<Boolean> checkNameUnique(MenuDTO dto) {
         return success(menuService.checkMenuNameUnique(dto));
+    }
+
+    @Log(businessType = BusinessType.QUERY)
+    @Operation(summary = "获取用户路由菜单")
+    @GetMapping("/router/{userId}")
+    public Result<List<RouterDTO>> getRouter(@PathVariable("userId") Long userId) {
+        List<MenuVO> menus = menuService.selectMenuVoByUserId(userId);
+        List<RouterDTO> result = menus.stream()
+                .map(vo->BeanUtil.copyProperties(vo, RouterDTO.class))
+                .collect(Collectors.toList());
+        return success(result);
     }
 }
 
