@@ -1,14 +1,17 @@
 package com.clm.common.security.utils;
 
+import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
-import com.clm.common.core.model.LoginUser;
+import cn.hutool.core.collection.CollUtil;
 import com.clm.common.core.domain.entity.User;
+import com.clm.common.core.model.LoginUser;
 import com.clm.common.core.utils.IpUtils;
-import com.clm.common.security.context.SecurityContextHolder;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,20 +32,25 @@ public class AuthenticationUtil {
      *
      * @param user 用户信息
      */
-    public static void login(User user, Set<String> roles, Set<String> permissions) {
+    public static void login(User user, Set<String> roles,Set<String> permissions) {
         // 构建登录信息
-        LoginUser loginUser = buildLoginUser(user, roles, permissions);
+        LoginUser loginUser = buildLoginUser(user,roles, permissions);
 
         // 保存登录用户信息到会话中
         StpUtil.login(user.getUserId());
 
+        SaSession session = StpUtil.getSession();
         // 将角色和权限存入 Token 额外数据（供网关透传）
-//        StpUtil.getTokenSession().set("roles", roles);
-//        StpUtil.getTokenSession().set("permissions", permissions);
-//        StpUtil.getTokenSession().set("username", user.getUserName());
-//
-//        // 保存登录用户信息到 SaToken 的 SessionStorage 中
-//        StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);
+        if(CollUtil.isNotEmpty(roles)){
+            session.set("roles", roles);
+        }
+        if(CollUtil.isNotEmpty(permissions)){
+            session.set("permissions", permissions);
+        }
+        StpUtil.getTokenSession().set("username", user.getUserName());
+
+        // 保存登录用户信息到 SaToken 的 SessionStorage 中
+        StpUtil.getTokenSession().set(LOGIN_USER_KEY, loginUser);
     }
 
     /**
@@ -59,15 +67,9 @@ public class AuthenticationUtil {
      */
     public static LoginUser getLoginUser() {
         try {
-            // 首先尝试从 SaToken 会话获取
             LoginUser loginUser = (LoginUser) StpUtil.getTokenSession().get(LOGIN_USER_KEY);
             if (Objects.nonNull(loginUser)) {
                 return loginUser;
-            }
-
-            // 如果 SaToken 会话中没有，尝试从网关透传的 Header 获取（适用于微服务间调用）
-            if (SecurityContextHolder.isLoggedIn()) {
-                return SecurityContextHolder.getLoginUser();
             }
         } catch (Exception e) {
             log.error("获取用户信息异常", e);
@@ -81,14 +83,8 @@ public class AuthenticationUtil {
      * @return 用户ID
      */
     public static Long getUserId() {
-        // 优先从 SaToken 获取
         Object loginId = StpUtil.getLoginIdDefaultNull();
-        if (loginId != null) {
-            return Long.valueOf(loginId.toString());
-        }
-
-        // 如果 SaToken 中没有，从网关 Header 获取
-        return SecurityContextHolder.getUserId();
+        return loginId == null ? null : Long.valueOf(loginId.toString());
     }
 
     /**
@@ -97,59 +93,8 @@ public class AuthenticationUtil {
      * @return 用户名
      */
     public static String getUsername() {
-        // 优先从 SaToken 获取
         LoginUser loginUser = getLoginUser();
-        if (Objects.nonNull(loginUser) && Objects.nonNull(loginUser.getUsername())) {
-            return loginUser.getUsername();
-        }
-
-        // 如果 SaToken 中没有，从网关 Header 获取
-        return SecurityContextHolder.getUsername();
-    }
-
-    /**
-     * 检查是否已登录
-     *
-     * @return true-已登录，false-未登录
-     */
-    public static boolean isLoggedIn() {
-        return Objects.nonNull(getUserId());
-    }
-
-    /**
-     * 检查是否拥有指定权限
-     *
-     * @param permission 权限标识
-     * @return true-有权限，false-无权限
-     */
-    public static boolean hasPermission(String permission) {
-        if (!isLoggedIn()) {
-            return false;
-        }
-        LoginUser loginUser = getLoginUser();
-        if (Objects.isNull(loginUser)) {
-            return false;
-        }
-        Set<String> permissions = loginUser.getPermissions();
-        return Objects.nonNull(permissions) && permissions.contains(permission);
-    }
-
-    /**
-     * 检查是否拥有指定角色
-     *
-     * @param role 角色标识
-     * @return true-有角色，false-无角色
-     */
-    public static boolean hasRole(String role) {
-        if (!isLoggedIn()) {
-            return false;
-        }
-        LoginUser loginUser = getLoginUser();
-        if (Objects.isNull(loginUser)) {
-            return false;
-        }
-        Set<String> roles = loginUser.getRoles();
-        return Objects.nonNull(roles) && roles.contains(role);
+        return loginUser == null ? null : loginUser.getUsername();
     }
 
     /**
@@ -158,7 +103,7 @@ public class AuthenticationUtil {
      * @param user 用户信息
      * @return 登录用户信息
      */
-    private static LoginUser buildLoginUser(User user, Set<String> roles, Set<String> permissions) {
+    private static LoginUser buildLoginUser(User user,Set<String> roles,Set<String> permissions) {
         LoginUser loginUser = new LoginUser();
         loginUser.setUserId(user.getUserId());
         loginUser.setUsername(user.getUserName());
@@ -171,4 +116,36 @@ public class AuthenticationUtil {
 
         return loginUser;
     }
+
+//    /**
+//     * 记录登录信息
+//     *
+//     * @param userId 用户ID
+//     */
+//    private static void recordLoginInfo(Long userId) {
+//        // 获取IP和地址
+//        String ip = ServletUtils.getClientIP();
+//
+//        // 更新用户登录信息的代码可以根据实际需求添加
+//        log.info("用户登录成功，用户ID：{}，IP：{}", userId, ip);
+//    }
+//
+//    /**
+//     * 是否为超级管理员
+//     *
+//     * @param userId 用户ID
+//     * @return 结果
+//     */
+//    public static boolean isSuperAdmin(Long userId) {
+//        return userId != null && Constants.SUPER_ADMIN_ID.equals(userId);
+//    }
+
+    /**
+     * 是否为超级管理员
+     *
+     * @return 结果
+     */
+//    public static boolean isSuperAdmin() {
+//        return isSuperAdmin(getUserId());
+//    }
 } 

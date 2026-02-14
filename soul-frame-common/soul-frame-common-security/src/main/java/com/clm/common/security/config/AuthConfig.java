@@ -1,4 +1,4 @@
-package com.clm.common.core.config;
+package com.clm.common.security.config;
 
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoRedisJackson;

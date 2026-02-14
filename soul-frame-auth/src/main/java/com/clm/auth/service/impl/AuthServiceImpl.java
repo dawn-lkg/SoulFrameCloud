@@ -30,6 +30,7 @@ import com.wf.captcha.SpecCaptcha;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -93,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
             remoteUserService.updateLoginInfo(user.getUserId());
 
             // 登录
-            AuthenticationUtil.login(user, null, null);
+            AuthenticationUtil.login(user, Collections.EMPTY_SET, null);
 
             // 获取登录token信息
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
