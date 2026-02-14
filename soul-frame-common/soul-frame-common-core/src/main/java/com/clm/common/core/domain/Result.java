@@ -182,6 +182,7 @@ public class Result<T> implements Serializable {
      * @param action 失败时执行的操作
      * @return this
      */
+    @JsonIgnore
     public Result<T> onFailure(Consumer<String> action) {
         if (isFailure()) {
             action.accept(msg);
@@ -229,6 +230,7 @@ public class Result<T> implements Serializable {
      * @throws RuntimeException 失败时抛出的异常
      */
     @SuppressWarnings("unchecked")
+    @JsonIgnore
     public <R> R getOrThrow() {
         if (isSuccess()) {
             return (R) data;
@@ -333,6 +335,7 @@ public class Result<T> implements Serializable {
      * 是否失败
      * @return 是否失败
      */
+    @JsonIgnore
     public boolean isFailure() {
         return !isSuccess();
     }

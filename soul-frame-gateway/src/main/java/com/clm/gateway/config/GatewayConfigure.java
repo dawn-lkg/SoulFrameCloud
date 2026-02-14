@@ -1,10 +1,14 @@
 package com.clm.gateway.config;
 
 import cn.dev33.satoken.context.SaHolder;
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.reactor.filter.SaReactorFilter;
 import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.json.JSONUtil;
+import com.clm.common.core.domain.Result;
+import com.clm.common.core.enums.HttpCodeEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -42,11 +46,7 @@ public class GatewayConfigure {
                 )
                 // 认证函数
                 .setAuth(obj -> {
-                    try {
-                        StpUtil.checkLogin();
-                    } catch (Exception e) {
-                        throw new RuntimeException("Token 验证失败: " + e.getMessage());
-                    }
+                    StpUtil.checkLogin();
                 })
                 // 前置函数：在每次认证函数之前执行
                 .setBeforeAuth(obj -> {
@@ -78,7 +78,27 @@ public class GatewayConfigure {
                 })
                 // 异常处理函数
                 .setError(e -> {
-                    throw new RuntimeException("认证失败: " + e.getMessage());
+//                    if (e instanceof NotLoginException) {
+//                        String message = "";
+//                        if (e.getType().equals(NotLoginException.NOT_TOKEN)) {
+//                            message = "未能读取到有效 token";
+//                        } else if (e.getType().equals(NotLoginException.INVALID_TOKEN)) {
+//                            message = "token无效";
+//                        } else if (e.getType().equals(NotLoginException.TOKEN_TIMEOUT)) {
+//                            message = "token已过期";
+//                        } else if (e.getType().equals(NotLoginException.KICK_OUT)) {
+//                            message = "token已被顶下线";
+//                        } else if (e.getType().equals(NotLoginException.BE_REPLACED)) {
+//                            message = "token已被顶下线";
+//                        } else if (e.getType().equals(NotLoginException.NO_PREFIX)) {
+//                            message = "未按照指定前缀提交 token";
+//                        } else {
+//                            message = "当前会话未登录";
+//                        }
+//                        return Result.error(HttpCodeEnum.UNAUTHORIZED.getCode(), message);
+//                    }
+                    SaHolder.getResponse().setHeader("Content-Type", "application/json;charset=UTF-8");
+                    return JSONUtil.toJsonStr(Result.error(HttpCodeEnum.UNAUTHORIZED.getCode(), "当前会话未登录"));
                 });
     }
 }

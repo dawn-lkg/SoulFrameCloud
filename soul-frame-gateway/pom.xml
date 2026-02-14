@@ -88,6 +88,13 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
+        <!-- 核心模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-core</artifactId>
+        </dependency>
+
+        <!-- 通用工具类 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-security</artifactId>
