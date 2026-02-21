@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: soul-frame-modules-file
+  config:
+    import:
+      - optional:nacos:application-${spring.profiles.active}.yml
+      - optional:nacos:minio-${spring.profiles.active}.yml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 111.228.52.114:8848
+        username: nacos
+        password: nacos
+      config:
+        server-addr: 111.228.52.114:8848
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+server:
+  port: 9994
+
