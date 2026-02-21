@@ -68,7 +68,6 @@ declare module 'vue' {
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     ATree: typeof import('ant-design-vue/es')['Tree']
     ATreeSelect: typeof import('ant-design-vue/es')['TreeSelect']
-    AUpload: typeof import('ant-design-vue/es')['Upload']
     AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
     ChatWidget: typeof import('./components/ChatWidget.vue')['default']
     CommonTable: typeof import('./components/common/common-table.vue')['default']

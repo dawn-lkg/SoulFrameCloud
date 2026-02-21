@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public SaTokenInfo login(LoginBody loginBody) {
-//        try {
+        try {
             String username = loginBody.getUsername();
             User user = remoteUserService.getUserByUsername(username).getOrThrow();
             String captchaValue = redisCache.get(RedisKeyConstants.System.CAPTCHA_PREFIX + loginBody.getUuid(), String.class);
@@ -106,12 +106,12 @@ public class AuthServiceImpl implements AuthService {
             recordLoginSuccess(username, user.getUserId(), "登录成功");
 
             return tokenInfo;
-//        } catch (BaseException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            recordLoginFail(loginBody.getUsername(), "登录异常：" + e.getMessage());
-//            throw new BaseException("登录失败：" + e.getMessage(), HttpCodeEnum.ERROR.getCode());
-//        }
+        } catch (BaseException e) {
+            throw e;
+        } catch (Exception e) {
+            recordLoginFail(loginBody.getUsername(), "登录异常：" + e.getMessage());
+            throw new BaseException("登录失败：" + e.getMessage(), HttpCodeEnum.ERROR.getCode());
+        }
     }
 
     @Override

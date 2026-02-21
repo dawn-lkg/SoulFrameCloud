@@ -31,7 +31,6 @@
         <easyexcel.version>3.1.5</easyexcel.version>
         <oshi.version>6.4.0</oshi.version>
         <druid.version>1.2.16</druid.version>
-        <mybatis.version>8.0.33</mybatis.version>
         <mysql.version>8.0.33</mysql.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
     </properties>
@@ -40,8 +39,9 @@
         <module>soul-frame-common</module>
         <module>soul-frame-gateway</module>
         <module>soul-frame-test</module>
-<!--        <module>soul-frame-modules</module>-->
+        <module>soul-frame-modules</module>
         <module>soul-frame-api</module>
+        <module>soul-frame-auth</module>
     </modules>
 
     <dependencyManagement>
