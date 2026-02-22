@@ -76,6 +76,12 @@
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-security</artifactId>
         </dependency>
+
+        <!-- Feign 公共模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-feign</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

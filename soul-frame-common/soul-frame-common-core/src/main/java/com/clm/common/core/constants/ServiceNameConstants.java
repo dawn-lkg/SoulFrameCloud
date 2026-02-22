@@ -15,5 +15,5 @@ public class ServiceNameConstants {
     /**
      * 文件模块的serviceId
      */
-    public static final String FILE_SERVICE = "soul-frame-file";
+    public static final String FILE_SERVICE = "soul-frame-modules-file";
 }

@@ -74,6 +74,12 @@ public class SqlInterceptor implements Interceptor {
     private int maxResultCount=10;
 
     /**
+     * 是否打印SQL日志
+     */
+    @Value("${mybatis-plus.sql-log.print-sql:true}")
+    private boolean printSql = true;
+
+    /**
      * SQL类型与操作名称的映射
      */
     private static final Map<SqlCommandType, String> SQL_TYPE_MAP = new EnumMap<>(SqlCommandType.class);
@@ -82,7 +88,10 @@ public class SqlInterceptor implements Interceptor {
      * 排除的SQL ID列表
      */
     private Set<String> excludeSqlIds = new HashSet<>(){{
-        add("com.clm.base_admin.modules.system.mapper.OperLogMapper.insert");
+        add("com.clm.modules.system.mapper.OperLogMapper.insert");
+        add("com.clm.modules.system.mapper.SysJobLogMapper.insert");
+        add("com.clm.modules.system.mapper.PerformanceMetricsMapper.insert");
+        add("com.clm.modules.system.mapper.LoginLogMapper.insert");
     }};
 
     /**
@@ -106,6 +115,9 @@ public class SqlInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        if (!printSql) {
+            return invocation.proceed();
+        }
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
         String sqlId = mappedStatement.getId();
         if (excludeSqlIds.contains(sqlId)) {
@@ -148,9 +160,10 @@ public class SqlInterceptor implements Interceptor {
             slowSqlTime = Integer.parseInt(properties.getProperty("slowSqlTime", "1000"));
             verySlowSqlTime = Integer.parseInt(properties.getProperty("verySlowSqlTime", "5000"));
             showOriginalSql = Boolean.parseBoolean(properties.getProperty("showOriginalSql", "false"));
-            printResult = Boolean.parseBoolean(properties.getProperty("printResult", "false"));
+            printResult = Boolean.parseBoolean(properties.getProperty("printResult", "true"));
             printParameter = Boolean.parseBoolean(properties.getProperty("printParameter", "false"));
             maxResultCount = Integer.parseInt(properties.getProperty("maxResultCount", "10"));
+            printSql = Boolean.parseBoolean(properties.getProperty("printSql", "true"));
 
             String excludeSqlIdsStr = properties.getProperty("excludeSqlIds");
             if (StrUtil.isNotBlank(excludeSqlIdsStr)) {

@@ -173,8 +173,8 @@ public class SseTemplate {
     private void startMonitoring() {
         scheduler.scheduleWithFixedDelay(() -> {
             try {
-                log.info("SSE Connection Monitoring - Total: {}, Active: {}, Stored: {}",
-                        totalConnections.get(), activeConnections.get(), repo.size());
+//                log.info("SSE Connection Monitoring - Total: {}, Active: {}, Stored: {}",
+//                        totalConnections.get(), activeConnections.get(), repo.size());
 
                 // 检查不一致情况
                 if (activeConnections.get() != repo.size()) {

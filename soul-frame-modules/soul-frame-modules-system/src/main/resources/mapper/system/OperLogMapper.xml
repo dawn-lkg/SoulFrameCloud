@@ -5,8 +5,49 @@
     <sql id="selectSql">
         SELECT
         oper_id, title, business_type, method, request_method, operator_type,
-        oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param,
-        json_result, status, error_msg, oper_time, os, browser, cost_time
+        oper_name, dept_name, oper_url, oper_ip, oper_location,
+        status, error_msg, oper_time, os, browser, cost_time
+        FROM sys_oper_log
+        <where>
+            <if test="param != null">
+                <if test="param.title != null and param.title != ''">
+                    AND title LIKE CONCAT('%', #{param.title}, '%')
+                </if>
+                <if test="param.operName != null and param.operName != ''">
+                    AND oper_name LIKE CONCAT('%', #{param.operName}, '%')
+                </if>
+                <if test="param.businessType != null">
+                    AND business_type = #{param.businessType}
+                </if>
+                <if test="param.status != null">
+                    AND status = #{param.status}
+                </if>
+                <if test="param.beginTime != null and param.endTime != null">
+                    AND oper_time BETWEEN #{param.beginTime} AND #{param.endTime}
+                </if>
+                <if test="param.beginTime != null and param.endTime == null">
+                    AND oper_time &gt;= #{param.beginTime}
+                </if>
+                <if test="param.beginTime == null and param.endTime != null">
+                    AND oper_time &lt;= #{param.endTime}
+                </if>
+                <if test="param.operIp != null and param.operIp != ''">
+                    AND oper_ip LIKE CONCAT('%', #{param.operIp}, '%')
+                </if>
+                <if test="param.requestMethod!=null and param.requestMethod != ''">
+                    AND request_method = #{param.requestMethod}
+                </if>
+            </if>
+        </where>
+        ORDER BY oper_time DESC
+    </sql>
+
+    <!-- 列表查询：排除大字段（oper_param, json_result） -->
+    <sql id="selectListSql">
+        SELECT
+        oper_id, title, business_type, method, request_method, operator_type,
+        oper_name, dept_name, oper_url, oper_ip, oper_location,
+        status, error_msg, oper_time, os, browser, cost_time
         FROM sys_oper_log
         <where>
             <if test="param != null">
@@ -43,7 +84,7 @@
     </sql>
 
     <select id="selectOperLogPage" resultType="com.clm.modules.system.domain.vo.OperLogVO">
-        <include refid="selectSql"/>
+        <include refid="selectListSql"/>
     </select>
     <select id="selectListRel" resultType="com.clm.modules.system.domain.vo.OperLogVO">
         <include refid="selectSql"/>

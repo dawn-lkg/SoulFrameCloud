@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev
+  config:
+    import:
+      - optional:nacos:application-${spring.profiles.active}.yml
+  cloud:
+    nacos:
+      config:
+        server-addr: 111.228.52.114:8848
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos

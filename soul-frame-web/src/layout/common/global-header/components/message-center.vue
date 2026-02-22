@@ -389,12 +389,12 @@ watch(activeTab, (newTab) => {
 onMounted(() => {
   // 初始化加载数据
   fetchMessages();
-  // useSSE("/notification/sse", {
-  //   keepAlive: false,
-  //   onMessage: (v, e) => {
-  //     handleEventType(v, e);
-  //   },
-  // });
+  useSSE("/notice/notification/sse", {
+    keepAlive: false,
+    onMessage: (v, e) => {
+      handleEventType(v, e);
+    },
+  });
 });
 </script>
 

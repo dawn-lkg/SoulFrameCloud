@@ -108,6 +108,7 @@ public class AuthenticationUtil {
         loginUser.setUserId(user.getUserId());
         loginUser.setUsername(user.getUserName());
         loginUser.setNickname(user.getNickName());
+        loginUser.setAvatar(user.getAvatar());
         loginUser.setDeptId(user.getDeptId());
         loginUser.setStatus(user.getStatus());
         loginUser.setIpaddr(IpUtils.getIpAddr());

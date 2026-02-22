@@ -13,6 +13,7 @@
 
     <modules>
         <module>soul-frame-api-system</module>
+        <module>soul-frame-api-file</module>
     </modules>
 
 </project>

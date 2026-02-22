@@ -1,9 +1,9 @@
 package com.clm.modules.notice.controller;
 
 import com.clm.common.core.controller.BaseController;
-import com.clm.common.security.LoginHelper;
-import com.clm.sse.SseConstant;
-import com.clm.sse.SseTemplate;
+import com.clm.common.security.utils.AuthenticationUtil;
+import com.clm.common.sse.SseConstant;
+import com.clm.common.sse.SseTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 @Tag(name = "消息通知SSE")
 @RestController
-@RequestMapping("/notification")
+@RequestMapping("/notice/notification")
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationSseController extends BaseController {
@@ -35,8 +35,8 @@ public class NotificationSseController extends BaseController {
     @Operation(summary = "建立SSE连接")
     @GetMapping(value = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter connect() {
-        Long userId = LoginHelper.getUserId();
-        String username = LoginHelper.getUsername();
+        Long userId = AuthenticationUtil.getUserId();
+        String username = AuthenticationUtil.getUsername();
         log.info("用户[{}]建立SSE连接", username);
         // 创建SSE连接，使用用户ID作为客户端标识
         SseEmitter emitter = sseTemplate.connect(SseConstant.MESSAGE_TODO_NOTICE_EVENT, userId.toString());

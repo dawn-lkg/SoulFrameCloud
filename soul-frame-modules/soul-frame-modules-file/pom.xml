@@ -23,8 +23,14 @@
         </dependency>
 
         <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-feign</artifactId>
+        </dependency>
+
+        <!-- 负载均衡 -->
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- SpringBoot -->
@@ -70,6 +76,18 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
 
+        <!-- 日志模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-log</artifactId>
+        </dependency>
+
+        <!-- Feign 公共模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-feign</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -78,13 +96,21 @@
     </dependencies>
 
 
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

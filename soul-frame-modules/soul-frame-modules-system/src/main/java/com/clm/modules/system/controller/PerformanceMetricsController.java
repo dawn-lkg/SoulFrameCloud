@@ -24,7 +24,7 @@ import java.util.List;
  * @date 2025-08-20 22:22:24
  */
 @RestController
-@RequestMapping("/performanceMetrics")
+@RequestMapping("/system/performanceMetrics")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "性能监控管理", description = "性能监控相关接口")

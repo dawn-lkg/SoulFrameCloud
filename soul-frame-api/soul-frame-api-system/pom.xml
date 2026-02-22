@@ -11,9 +11,16 @@
     <description>soul-frame-api-system</description>
 
     <dependencies>
+        <!-- 公共核心模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-core</artifactId>
+        </dependency>
+
+        <!-- Feign 公共模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-feign</artifactId>
         </dependency>
     </dependencies>
 

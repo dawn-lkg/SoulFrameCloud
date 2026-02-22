@@ -145,7 +145,7 @@
     </div>
 
     <!-- 数据日志详情 -->
-    <data-log-detail v-model:visible="detailVisible" :detail-data="detailInfo" />
+    <data-log-detail v-model:visible="detailVisible" :operId="detailInfo.operId" />
   </div>
 </template>
 

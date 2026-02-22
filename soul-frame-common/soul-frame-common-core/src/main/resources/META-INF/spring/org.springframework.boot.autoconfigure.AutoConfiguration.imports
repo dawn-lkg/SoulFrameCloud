@@ -1,1 +1,2 @@
 com.clm.common.core.config.JacksonConfiguration
+com.clm.common.core.config.MybatisPlusConfig

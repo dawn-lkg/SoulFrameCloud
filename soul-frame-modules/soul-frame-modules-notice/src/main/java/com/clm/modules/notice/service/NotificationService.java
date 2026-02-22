@@ -2,9 +2,9 @@ package com.clm.modules.notice.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.clm.modules.system.domain.entity.Notification;
-import com.clm.modules.system.domain.param.NotificationQueryParam;
-import com.clm.modules.system.domain.vo.NotificationVO;
+import com.clm.modules.notice.domain.entity.Notification;
+import com.clm.modules.notice.domain.param.NotificationQueryParam;
+import com.clm.modules.notice.domain.vo.NotificationVO;
 
 /**
  * 通知服务接口

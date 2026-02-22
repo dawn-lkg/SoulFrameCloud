@@ -46,34 +46,39 @@
 
 <script setup>
 import {OPERATE_STATUS, OPERATE_TYPE} from '@/config'
+import { getDataLogDetail } from '@/api/modules/dataLog'
 
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
   },
-  detailData: {
-    type: Object,
-    default: () => ({})
+  operId: {
+    type: Number,
+    default: 0
   }
 })
 
 const emit = defineEmits(['update:visible'])
 
 // 详情信息
-const detailInfo = ref({})
+const detailInfo = ref(null)
 
-// 监听detailData变化
-watch(() => props.detailData, (newVal) => {
-  if (newVal) {
-    detailInfo.value = newVal
-  }
-}, { deep: true, immediate: true })
+
+// 获取数据日志详情
+const getDetail = async () => {
+  const res = await getDataLogDetail(props.operId)
+  detailInfo.value = res.data
+  console.log(detailInfo.value);
+  
+}
 
 // 监听visible变化
 watch(() => props.visible, (newVal) => {
   if (!newVal) {
     emit('update:visible', false)
+  } else {
+    getDetail()
   }
 })
 

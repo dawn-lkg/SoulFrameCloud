@@ -3,8 +3,8 @@ package com.clm.modules.notice.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.clm.modules.system.domain.entity.Message;
-import com.clm.modules.system.domain.vo.MessageVO;
+import com.clm.modules.notice.domain.entity.Message;
+import com.clm.modules.notice.domain.vo.MessageVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

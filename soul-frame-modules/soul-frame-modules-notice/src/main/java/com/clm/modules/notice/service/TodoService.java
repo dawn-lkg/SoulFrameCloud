@@ -2,10 +2,10 @@ package com.clm.modules.notice.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.clm.modules.system.domain.dto.TodoDTO;
-import com.clm.modules.system.domain.entity.Todo;
-import com.clm.modules.system.domain.param.TodoQueryParam;
-import com.clm.modules.system.domain.vo.TodoVO;
+import com.clm.modules.notice.domain.dto.TodoDTO;
+import com.clm.modules.notice.domain.entity.Todo;
+import com.clm.modules.notice.domain.param.TodoQueryParam;
+import com.clm.modules.notice.domain.vo.TodoVO;
 
 /**
  * 待办事项服务接口

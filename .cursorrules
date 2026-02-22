@@ -9,17 +9,24 @@ Cursor Rules for soul-frame project
   - 所有三方库（Spring Boot/Cloud、Spring Cloud Alibaba、sa-token、hutool、fastjson、lombok、mybatis-plus 等）版本号只在父 POM 定义。
   - 子模块只写 `<groupId>` + `<artifactId>`，不在子模块里重复写 `<version>`。
 - Maven 模块职责（保持该列表与实际模块结构同步，如有增删改请更新本规则）：
-  - `soul-frame-common`：公共能力聚合 POM（core/log/redis/security）。
+  - `soul-frame-common`：公共能力聚合 POM（core/log/redis/security/feign）。
   - `soul-frame-common-core`：通用常量、基础实体、Result、工具类等。
   - `soul-frame-common-log`：日志相关的公共封装（操作日志 AOP 等）。
   - `soul-frame-common-redis`：Redis 自动配置与工具。
   - `soul-frame-common-security`：鉴权、权限相关公共能力。
+  - `soul-frame-common-feign`：Feign 公共配置（拦截器、Token 传递等）。
+  - `soul-frame-common-sse`：Server-Sent Events 公共封装。
   - `soul-frame-api`：微服务之间共享的接口契约（Feign 接口 + DTO/VO）。
   - `soul-frame-api-system`：系统服务对外暴露的 Feign 接口与 DTO/VO。
+  - `soul-frame-api-file`：文件服务对外暴露的 Feign 接口与 DTO/VO。
   - `soul-frame-gateway`：Spring Cloud Gateway 网关服务。
   - `soul-frame-modules`：业务微服务聚合 POM。
-  - `soul-frame-modules-system`：系统业务服务（用户、角色、菜单、日志、监控等）。
+  - `soul-frame-modules-system`：系统业务服务（用户、角色、菜单、日志、监控、定时任务等）。
+  - `soul-frame-modules-file`：文件上传服务。
+  - `soul-frame-modules-notice`：通知公告服务（消息、通知、待办等）。
+  - `soul-frame-auth`：认证授权服务。
   - `soul-frame-test`：用于联调和示例的测试微服务。
+  - `soul-frame-web`：前端项目（Vue 3 + Vite）。
 
 
 --------------------------------------------------
@@ -28,7 +35,7 @@ Cursor Rules for soul-frame project
 
 - 严格区分「领域实体」与「跨服务传输对象」：
   - 业务实体（带数据库表结构、MyBatis-Plus 注解）放在各业务模块中，例如：
-    - `soul-frame-modules-system` 下的 `entity` 包负责映射具体表（User, Role, Menu, OperLog 等）。
+    - `soul-frame-modules-system` 下的 `domain/entity` 包负责映射具体表（User, Role, Menu, OperLog, SysJob, SysJobLog 等）。
   - DTO/VO 放在 `api` 模块中，例如：
     - `soul-frame-api-system` 中放 `UserDTO`, `UserInfoDTO`, `OperLogDTO` 等用于跨服务传输的对象。
 - 不在 `soul-frame-api-*` 模块中引入 MyBatis-Plus：
@@ -53,6 +60,7 @@ Cursor Rules for soul-frame project
     - `soul-frame-common-log`
     - `soul-frame-common-redis`
     - `soul-frame-common-security`
+    - `soul-frame-common-feign`
     - 对应的 `soul-frame-api-*` 模块
   - 网关模块 `soul-frame-gateway` 不直接依赖业务模块源码，只通过 HTTP/路由或 Feign 进行交互（如确有必要，只依赖 API 模块）。
 
@@ -108,6 +116,47 @@ Cursor Rules for soul-frame project
 - 新增重要业务场景时，应评估是否需要操作日志记录，若需要则：
   - 添加/复用相应的注解或 AOP 切点。
   - 在对应服务中实现必要的日志落库逻辑。
+
+
+--------------------------------------------------
+定时任务（Quartz）约定
+--------------------------------------------------
+
+- 定时任务功能已合并至 `soul-frame-modules-system` 模块。
+- 定时任务相关文件放在 `system` 模块的以下目录：
+  - `domain/entity/SysJob.java`：定时任务实体
+  - `domain/entity/SysJobLog.java`：定时任务日志实体
+  - `controller/JobController.java`：定时任务管理接口
+  - `controller/JobLogController.java`：定时任务日志接口
+  - `service/SysJobService.java`：定时任务服务接口
+  - `service/SysJobLogService.java`：定时任务日志服务接口
+  - `timerTask/`：定时任务执行类（如 `TodoTask`, `MonitorTask`）
+  - `util/`：定时任务工具类（如 `ScheduleUtils`, `CronUtils`, `JobInvokeUtil`）
+  - `config/ScheduleConfig.java`：Quartz Scheduler 配置
+- 定时任务使用 Spring Utils 获取 Bean：
+  - 由于 Quartz Job 不在 Spring 容器中，需通过 `SpringUtils.getBean()` 获取依赖
+- 业务定时任务类需添加 `@Component("taskName")` 注解，bean 名称需与 `invokeTarget` 配置匹配。
+
+
+--------------------------------------------------
+前端（Vue 3 + Vite）约定
+--------------------------------------------------
+
+- 前端项目位于 `soul-frame-web`，使用 Vue 3 + Vite 构建。
+- 目录结构规范：
+  - `src/api/modules/`：API 接口模块，按业务模块拆分（如 `user.js`, `menu.js`, `job.js`）
+  - `src/components/`：公共组件
+  - `src/views/`：页面视图，按模块划分（如 `system/`, `monitor/`）
+  - `src/stores/`：Pinia 状态管理
+  - `src/utils/`：工具函数（如 `request.js`, `useSSE.js`）
+  - `src/layout/`：布局组件
+- SSE（Server-Sent Events）使用规范：
+  - 使用 `src/utils/useSSE.js` 提供的 `useSSE` 组合式函数
+  - SSE 功能可通过配置开关控制（如 `SSE_ENABLED` 常量）
+  - 使用 `onMounted` 时创建连接，`onUnmounted` 时断开连接
+- 请求封装：
+  - 使用 `src/utils/request.js` 封装 axios处理 Token、错误拦截等
+ ，统一 - 所有 API 调用通过 `src/api/modules/` 下的模块发起
 
 
 --------------------------------------------------

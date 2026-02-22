@@ -52,7 +52,7 @@ public interface OperLogService extends IService<OperLog> {
      * @param operId 操作ID
      * @return 操作日志对象
      */
-    OperLogVO getOperLogById(Long operId);
+    OperLog getOperLogById(Long operId);
     
     /**
      * 清空操作日志

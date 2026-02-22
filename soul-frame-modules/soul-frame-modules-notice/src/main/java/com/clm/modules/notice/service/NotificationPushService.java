@@ -1,6 +1,6 @@
 package com.clm.modules.notice.service;
 
-import com.clm.modules.system.domain.vo.NotificationVO;
+import com.clm.modules.notice.domain.vo.NotificationVO;
 
 /**
  * 通知推送服务接口

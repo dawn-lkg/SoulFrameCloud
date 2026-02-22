@@ -4,12 +4,12 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
-import com.clm.common.enums.BusinessType;
-import com.clm.framework.annotation.Log;
-import com.clm.system.domain.dto.TodoDTO;
-import com.clm.system.domain.param.TodoQueryParam;
-import com.clm.system.domain.vo.TodoVO;
-import com.clm.system.service.TodoService;
+import com.clm.common.log.enums.BusinessType;
+import com.clm.common.log.annotation.Log;
+import com.clm.modules.notice.domain.dto.TodoDTO;
+import com.clm.modules.notice.domain.param.TodoQueryParam;
+import com.clm.modules.notice.domain.vo.TodoVO;
+import com.clm.modules.notice.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "待办事项管理")
 @RestController
-@RequestMapping("/todo")
+@RequestMapping("/notice/todo")
 @RequiredArgsConstructor
 @SaCheckLogin
 public class TodoController extends BaseController {

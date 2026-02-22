@@ -43,7 +43,7 @@ public class OperLogController extends BaseController {
 
     @Operation(summary = "获取操作日志详细信息")
     @GetMapping("/{operId}")
-    public Result<OperLogVO> getInfo(@Schema(description = "操作日志ID") @PathVariable("operId") Long operId) {
+    public Result<OperLog> getInfo(@Schema(description = "操作日志ID") @PathVariable("operId") Long operId) {
         return success(operLogService.getOperLogById(operId));
     }
 

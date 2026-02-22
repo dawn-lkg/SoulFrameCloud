@@ -13,13 +13,12 @@ import com.clm.common.core.exception.BaseException;
 import com.clm.common.core.utils.IpUtils;
 import com.clm.common.core.utils.ServletUtils;
 import com.clm.common.core.utils.UserAgentUtils;
-import com.clm.modules.system.domain.dto.FileUploadDTO;
-import com.clm.modules.system.domain.entity.File;
-import com.clm.modules.system.domain.param.FileQueryParam;
-import com.clm.modules.system.domain.vo.FileVO;
-import com.clm.modules.system.mapper.FileMapper;
-import com.clm.modules.system.service.ConfigService;
-import com.clm.modules.system.service.FileService;
+import com.clm.modules.file.domain.dto.FileUploadDTO;
+import com.clm.modules.file.domain.entity.File;
+import com.clm.modules.file.domain.param.FileQueryParam;
+import com.clm.modules.file.domain.vo.FileVO;
+import com.clm.modules.file.mapper.FileMapper;
+import com.clm.modules.file.service.FileService;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +64,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
     @Value("${file.local-path:/uploads}")
     private String localFilePath;
 
-    private final ConfigService configService;
+//    private final ConfigService configService;
 
     @Override
     public IPage<FileVO> selectFilePage(FileQueryParam param) {
@@ -157,7 +156,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 throw new BaseException(HttpCodeEnum.BAD_REQUEST.getCode(), "上传文件不能为空");
             }
 
-            String configStorageType = configService.getValueByKey("storage.storageType", String.class);
+//            String configStorageType = configService.getValueByKey("storage.storageType", String.class);
 
             String originalFilename = file.getOriginalFilename();
             String fileExtension = FileUtil.extName(originalFilename);
@@ -169,7 +168,8 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             String fileName = IdUtil.fastSimpleUUID() + "." + fileExtension;
             
             // 存储类型，默认为local
-            String storageType = StrUtil.isBlank(uploadDTO.getStorageType()) ? configStorageType : uploadDTO.getStorageType();
+//            String storageType = StrUtil.isBlank(uploadDTO.getStorageType()) ? configStorageType : uploadDTO.getStorageType();
+            String storageType = "minio";
             
             // 存储路径
             String storagePath;
@@ -195,7 +195,7 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             fileEntity.setStoragePath(storagePath);
             fileEntity.setStorageType(storageType);
             fileEntity.setBucketName(bucketName);
-            fileEntity.setOwnerId(StpUtil.getLoginIdAsLong());
+
             fileEntity.setStatus("active");
             fileEntity.setIsPublic(uploadDTO.getIsPublic() != null ? uploadDTO.getIsPublic() : false);
             fileEntity.setIsEncrypted(uploadDTO.getIsEncrypted() != null ? uploadDTO.getIsEncrypted() : false);
@@ -207,6 +207,11 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
             fileEntity.setDownloadCount(0);
             fileEntity.setViewCount(0);
             fileEntity.setDescription(uploadDTO.getDescription());
+            try {
+                fileEntity.setOwnerId(StpUtil.getLoginIdAsLong());
+            } catch (Exception e) {
+                fileEntity.setOwnerId(0L);
+            }
             String fileUrl = getFileUrl(fileEntity);
             fileEntity.setFileUrl(fileUrl.substring(0, fileUrl.indexOf("?")));
 

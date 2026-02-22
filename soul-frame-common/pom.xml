@@ -10,6 +10,7 @@
 
     <modules>
         <module>soul-frame-common-core</module>
+        <module>soul-frame-common-feign</module>
         <module>soul-frame-common-log</module>
         <module>soul-frame-common-redis</module>
         <module>soul-frame-common-security</module>

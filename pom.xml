@@ -31,6 +31,7 @@
         <easyexcel.version>3.1.5</easyexcel.version>
         <oshi.version>6.4.0</oshi.version>
         <druid.version>1.2.16</druid.version>
+        <quartz.version>2.3.2</quartz.version>
         <mysql.version>8.0.33</mysql.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
     </properties>
@@ -133,10 +134,22 @@
                 <artifactId>soul-frame-common-security</artifactId>
                 <version>${soul-frame.version}</version>
             </dependency>
+            <!-- Feign模块  -->
+            <dependency>
+                <groupId>com.clm</groupId>
+                <artifactId>soul-frame-common-feign</artifactId>
+                <version>${soul-frame.version}</version>
+            </dependency>
             <!-- 系统接口模块  -->
             <dependency>
                 <groupId>com.clm</groupId>
                 <artifactId>soul-frame-api-system</artifactId>
+                <version>${soul-frame.version}</version>
+            </dependency>
+            <!-- 文件接口模块  -->
+            <dependency>
+                <groupId>com.clm</groupId>
+                <artifactId>soul-frame-api-file</artifactId>
                 <version>${soul-frame.version}</version>
             </dependency>
             <!-- Redis模块 -->
@@ -220,6 +233,13 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- Quartz定时任务 -->
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
             </dependency>
 
             <!-- 图形验证码 -->

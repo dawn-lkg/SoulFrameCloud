@@ -4,12 +4,12 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
-import com.clm.common.enums.BusinessType;
-import com.clm.framework.annotation.Log;
-import com.clm.system.domain.dto.MessageDTO;
-import com.clm.system.domain.param.MessageQueryParam;
-import com.clm.system.domain.vo.MessageVO;
-import com.clm.system.service.MessageService;
+import com.clm.common.log.enums.BusinessType;
+import com.clm.common.log.annotation.Log;
+import com.clm.modules.notice.domain.dto.MessageDTO;
+import com.clm.modules.notice.domain.param.MessageQueryParam;
+import com.clm.modules.notice.domain.vo.MessageVO;
+import com.clm.modules.notice.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "消息管理")
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/notice/message")
 @RequiredArgsConstructor
 @SaCheckLogin
 public class MessageController extends BaseController {

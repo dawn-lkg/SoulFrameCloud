@@ -6,12 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.clm.common.core.exception.BaseException;
 import com.clm.common.security.utils.AuthenticationUtil;
-import com.clm.modules.system.domain.entity.Notification;
-import com.clm.modules.system.domain.param.NotificationQueryParam;
-import com.clm.modules.system.domain.vo.NotificationVO;
-import com.clm.modules.system.mapper.NotificationMapper;
-import com.clm.modules.system.service.NotificationPushService;
-import com.clm.modules.system.service.NotificationService;
+import com.clm.modules.notice.domain.entity.Notification;
+import com.clm.modules.notice.domain.param.NotificationQueryParam;
+import com.clm.modules.notice.domain.vo.NotificationVO;
+import com.clm.modules.notice.mapper.NotificationMapper;
+import com.clm.modules.notice.service.NotificationPushService;
+import com.clm.modules.notice.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
      */
     @Override
     public IPage<NotificationVO> getNotificationPage(NotificationQueryParam param) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
         Page<Notification> page = new Page<>(param.getPageNum(), param.getPageSize());
         return baseMapper.selectNotificationPage(page, userId, param.getTitle(), param.getType(), param.getRead());
     }
@@ -51,7 +51,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
      */
     @Override
     public Integer getUnreadCount() {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
         return baseMapper.selectUnreadCount(userId);
     }
 
@@ -63,7 +63,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void markAsRead(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查通知是否存在且属于当前用户
         Notification notification = getById(id);
@@ -113,7 +113,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteNotification(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查通知是否存在且属于当前用户
         Notification notification = getById(id);
@@ -139,7 +139,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationMapper, Not
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void clearAllNotifications() {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         LambdaUpdateWrapper<Notification> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Notification::getUserId, userId)

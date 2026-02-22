@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 文件信息VO
@@ -132,7 +133,7 @@ public class FileVO implements Serializable {
      * 文件标签
      */
     @Schema(description = "文件标签")
-    private String[] tags;
+    private List<String> tags;
 
     /**
      * 文件描述

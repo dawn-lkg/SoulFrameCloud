@@ -10,6 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -29,8 +30,7 @@ import java.util.TimeZone;
  * @date 2025/3/2 上午12:12
  */
 @Slf4j
-@Configuration
-//@JsonComponent
+@JsonComponent
 public class JacksonConfiguration {
     private static final String TIME_ZONE = "GMT+8";
 
@@ -126,7 +126,7 @@ public class JacksonConfiguration {
         
         // 注册Java8日期时间模块
         objectMapper.registerModule(new JavaTimeModule());
-        
+
         return objectMapper;
     }
 

@@ -14,6 +14,7 @@
     <modules>
         <module>soul-frame-modules-system</module>
         <module>soul-frame-modules-file</module>
+        <module>soul-frame-modules-notice</module>
     </modules>
 
 

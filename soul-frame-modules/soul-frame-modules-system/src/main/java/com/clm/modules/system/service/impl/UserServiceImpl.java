@@ -5,6 +5,8 @@ import cn.hutool.system.UserInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.clm.api.file.RemoteFileService;
+import com.clm.api.file.domain.FileVO;
 import com.clm.common.core.domain.entity.User;
 import com.clm.common.core.enums.HttpCodeEnum;
 import com.clm.common.core.exception.BaseException;
@@ -52,7 +54,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final ConfigService configService;
 
-//    private final FileService fileService;
+    private final RemoteFileService remoteFileService;
 
     @Override
     public IPage<UserPageVO> getUserPage(UserQueryParam param) {
@@ -267,12 +269,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public void updateAvatar(MultipartFile file) {
-//        String url = fileService.uploadFile(file);
-//        boolean update = lambdaUpdate().eq(User::getUserId, LoginHelper.getUserId())
-//                .set(User::getAvatar, url).update();
-//        if (!update) {
-//            throw new BaseException("更新头像失败", HttpCodeEnum.ERROR.getCode());
-//        }
+        String fileUrl = remoteFileService.uploadFile(file).getOrThrow();
+        if (StrUtil.isBlank(fileUrl)) {
+            throw new BaseException("上传头像失败", HttpCodeEnum.ERROR.getCode());
+        }
+        lambdaUpdate().eq(User::getUserId, AuthenticationUtil.getUserId())
+                .set(User::getAvatar, fileUrl).update();
     }
 
     @Override

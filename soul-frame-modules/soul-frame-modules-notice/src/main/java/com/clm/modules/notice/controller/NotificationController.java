@@ -4,12 +4,12 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
-import com.clm.common.enums.BusinessType;
-import com.clm.framework.annotation.Log;
-import com.clm.system.domain.dto.NotificationDTO;
-import com.clm.system.domain.param.NotificationQueryParam;
-import com.clm.system.domain.vo.NotificationVO;
-import com.clm.system.service.NotificationService;
+import com.clm.common.log.enums.BusinessType;
+import com.clm.common.log.annotation.Log;
+import com.clm.modules.notice.domain.dto.NotificationDTO;
+import com.clm.modules.notice.domain.param.NotificationQueryParam;
+import com.clm.modules.notice.domain.vo.NotificationVO;
+import com.clm.modules.notice.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Tag(name = "通知管理")
 @RestController
-@RequestMapping("/notification")
+@RequestMapping("/notice/notification")
 @RequiredArgsConstructor
 @SaCheckLogin
 public class NotificationController extends BaseController {

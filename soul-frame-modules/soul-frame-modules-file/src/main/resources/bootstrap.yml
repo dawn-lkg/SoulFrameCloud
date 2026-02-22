@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: soul-frame-modules-file
   config:
@@ -18,4 +20,3 @@ spring:
         password: nacos
 server:
   port: 9994
-

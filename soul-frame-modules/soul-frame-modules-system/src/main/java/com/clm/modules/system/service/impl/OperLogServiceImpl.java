@@ -74,19 +74,13 @@ public class OperLogServiceImpl extends ServiceImpl<OperLogMapper, OperLog> impl
     }
     
     @Override
-    public OperLogVO getOperLogById(Long operId) {
+    public OperLog getOperLogById(Long operId) {
         OperLog operLog = getById(operId);
         if (operLog == null) {
             throw new BaseException("操作日志不存在", HttpCodeEnum.DATA_NOT_EXIST.getCode());
         }
         
-        OperLogVO vo = new OperLogVO();
-        BeanUtils.copyProperties(operLog, vo);
-        
-        // 填充枚举描述
-        processOperLogVO(vo);
-        
-        return vo;
+        return operLog;
     }
     
     @Override

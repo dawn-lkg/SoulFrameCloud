@@ -5,10 +5,10 @@ import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.Result;
 import com.clm.common.log.enums.BusinessType;
 import com.clm.common.log.annotation.Log;
-import com.clm.modules.system.domain.dto.FileUploadDTO;
-import com.clm.modules.system.domain.param.FileQueryParam;
-import com.clm.modules.system.domain.vo.FileVO;
-import com.clm.modules.system.service.FileService;
+import com.clm.modules.file.domain.dto.FileUploadDTO;
+import com.clm.modules.file.domain.param.FileQueryParam;
+import com.clm.modules.file.domain.vo.FileVO;
+import com.clm.modules.file.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ import java.util.List;
 @Slf4j
 @Tag(name = "文件管理")
 @RestController
-@RequestMapping("/system/file")
+@RequestMapping("/file")
 @RequiredArgsConstructor
 public class FileController extends BaseController {
 
@@ -77,6 +77,13 @@ public class FileController extends BaseController {
         uploadDTO.setIsEncrypted(isEncrypted);
         uploadDTO.setDescription(description);
         return success(fileService.uploadFile(uploadDTO));
+    }
+
+    @Operation(summary = "上传文件")
+    @PostMapping(value = "/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Log(businessType = BusinessType.INSERT)
+    public Result<String> uploadFile(@RequestPart("file") MultipartFile file) {
+        return success(fileService.uploadFile(file));
     }
 
     @Operation(summary = "批量上传文件")

@@ -22,7 +22,7 @@ import oshi.hardware.HardwareAbstractionLayer;
  */
 @Tag(name = "服务器管理")
 @RestController
-@RequestMapping("/monitor/server")
+@RequestMapping("/system/monitor/server")
 public class MonitorServerController extends BaseController {
 
     @Log(businessType = BusinessType.QUERY)

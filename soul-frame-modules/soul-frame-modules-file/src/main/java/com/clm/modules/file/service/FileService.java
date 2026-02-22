@@ -2,10 +2,10 @@ package com.clm.modules.file.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.clm.modules.system.domain.dto.FileUploadDTO;
-import com.clm.modules.system.domain.entity.File;
-import com.clm.modules.system.domain.param.FileQueryParam;
-import com.clm.modules.system.domain.vo.FileVO;
+import com.clm.modules.file.domain.dto.FileUploadDTO;
+import com.clm.modules.file.domain.entity.File;
+import com.clm.modules.file.domain.param.FileQueryParam;
+import com.clm.modules.file.domain.vo.FileVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;

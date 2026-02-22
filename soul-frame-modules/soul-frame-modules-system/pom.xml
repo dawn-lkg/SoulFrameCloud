@@ -17,6 +17,12 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
 
+        <!-- Quartz定时任务 -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+
         <!-- 系统 API 模块（Feign 接口 + DTO） -->
         <dependency>
             <groupId>com.clm</groupId>
@@ -29,37 +35,44 @@
             <artifactId>soul-frame-common-core</artifactId>
         </dependency>
 
+        <!-- Nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
 
+        <!-- Nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
+        <!-- Feign -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-feign</artifactId>
         </dependency>
 
+        <!-- 负载均衡 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
+        <!-- SpringBoot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- 测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -71,6 +84,7 @@
             <artifactId>easyexcel</artifactId>
         </dependency>
 
+        <!-- OSHI -->
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
@@ -82,9 +96,16 @@
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- SSE模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-sse</artifactId>
+        </dependency>
+
+        <!-- Feign 公共模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-feign</artifactId>
         </dependency>
 
         <!-- 数据库驱动 -->
@@ -110,6 +131,11 @@
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-api-system</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-api-file</artifactId>
         </dependency>
 
 

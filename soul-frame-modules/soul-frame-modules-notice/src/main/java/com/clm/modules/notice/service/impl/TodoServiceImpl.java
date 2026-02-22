@@ -5,14 +5,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.clm.common.core.exception.BaseException;
-import com.clm.modules.system.domain.dto.TodoDTO;
-import com.clm.modules.system.domain.entity.Todo;
-import com.clm.modules.system.domain.param.TodoQueryParam;
-import com.clm.modules.system.domain.vo.TodoVO;
-import com.clm.modules.system.enums.TodoStatusEnum;
-import com.clm.modules.system.mapper.TodoMapper;
-import com.clm.modules.system.service.NotificationPushService;
-import com.clm.modules.system.service.TodoService;
+import com.clm.modules.notice.domain.dto.TodoDTO;
+import com.clm.modules.notice.domain.entity.Todo;
+import com.clm.modules.notice.domain.param.TodoQueryParam;
+import com.clm.modules.notice.domain.vo.TodoVO;
+import com.clm.modules.notice.enums.TodoStatusEnum;
+import com.clm.modules.notice.mapper.TodoMapper;
+import com.clm.modules.notice.service.NotificationPushService;
+import com.clm.modules.notice.service.TodoService;
+import com.clm.common.security.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
         // 更新已过期的待办事项状态
         updateOverdueTodos();
 
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
         Page<Todo> page = new Page<>(param.getPageNum(), param.getPageSize());
         return baseMapper.selectTodoPage(page, userId, param.getTitle(), param.getStatus(), param.getPriority());
     }
@@ -56,7 +57,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
      */
     @Override
     public TodoVO getTodoDetail(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查待办事项是否存在且属于当前用户
         Todo todo = getById(id);
@@ -82,7 +83,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
     @Override
     @Transactional(rollbackFor = Exception.class)
     public TodoVO createTodo(TodoDTO todoDTO) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         Todo todo = new Todo();
         BeanUtils.copyProperties(todoDTO, todo);
@@ -116,7 +117,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
     @Override
     @Transactional(rollbackFor = Exception.class)
     public TodoVO updateTodo(Long id, TodoDTO todoDTO) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查待办事项是否存在且属于当前用户
         Todo todo = getById(id);
@@ -159,7 +160,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteTodo(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查待办事项是否存在且属于当前用户
         Todo todo = getById(id);
@@ -187,7 +188,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void completeTodo(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查待办事项是否存在且属于当前用户
         Todo todo = getById(id);
@@ -217,7 +218,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
 
     @Override
     public void incompleteTodo(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查待办事项是否存在且属于当前用户
         Todo todo = getById(id);
@@ -253,7 +254,7 @@ public class TodoServiceImpl extends ServiceImpl<TodoMapper, Todo> implements To
      */
     @Override
     public Integer getPendingCount() {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
         return baseMapper.selectPendingCount(userId);
     }
 

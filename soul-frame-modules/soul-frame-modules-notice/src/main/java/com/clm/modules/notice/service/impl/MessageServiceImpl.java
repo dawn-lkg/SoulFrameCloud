@@ -4,17 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.clm.common.exception.BaseException;
-import com.clm.sse.SseConstant;
-import com.clm.sse.SseTemplate;
-import com.clm.modules.system.domain.dto.MessageDTO;
-import com.clm.modules.system.domain.entity.Message;
-import com.clm.modules.system.domain.param.MessageQueryParam;
-import com.clm.modules.system.domain.vo.MessageVO;
-import com.clm.modules.system.mapper.MessageMapper;
-import com.clm.modules.system.service.MessageService;
-import com.clm.modules.system.service.NotificationPushService;
-import com.clm.modules.system.service.UserService;
+import com.clm.common.core.exception.BaseException;
+import com.clm.common.core.model.LoginUser;
+import com.clm.common.sse.SseConstant;
+import com.clm.common.sse.SseTemplate;
+import com.clm.modules.notice.domain.dto.MessageDTO;
+import com.clm.modules.notice.domain.entity.Message;
+import com.clm.modules.notice.domain.param.MessageQueryParam;
+import com.clm.modules.notice.domain.vo.MessageVO;
+import com.clm.modules.notice.mapper.MessageMapper;
+import com.clm.modules.notice.service.MessageService;
+import com.clm.modules.notice.service.NotificationPushService;
+import com.clm.common.security.utils.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,27 +34,26 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> implements MessageService {
 
-    private final UserService userService;
     private final NotificationPushService notificationPushService;
     private final SseTemplate sseTemplate;
 
     @Override
     public IPage<MessageVO> getMessagePage(MessageQueryParam param) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
         Page<Message> page = new Page<>(param.getPageNum(), param.getPageSize());
         return baseMapper.selectMessagePage(page, userId, param.getSender(), param.getContent(), param.getType(), param.getRead());
     }
 
     @Override
     public Integer getUnreadCount() {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
         return baseMapper.selectUnreadCount(userId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void markAsRead(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查消息是否存在且属于当前用户
         Message message = getById(id);
@@ -86,7 +86,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void markAllAsRead() {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         LambdaUpdateWrapper<Message> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Message::getReceiverId, userId)
@@ -105,7 +105,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteMessage(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查消息是否存在且属于当前用户
         Message message = getById(id);
@@ -134,18 +134,20 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public MessageVO sendMessage(MessageDTO messageDTO) {
-        Long userId = LoginHelper.getUserId();
-        String username = LoginHelper.getUsername();
-        String avatar = userService.getUserInfo(userId).getAvatar();
+        Long userId = AuthenticationUtil.getUserId();
+        LoginUser loginUser = AuthenticationUtil.getLoginUser();
+        if(loginUser == null){
+            throw new BaseException("用户不存在");
+        }
 
         Message message = new Message();
         message.setSenderId(userId)
-                .setSender(username)
+                .setSender(loginUser.getUsername())
                 .setReceiverId(messageDTO.getReceiverId())
                 .setContent(messageDTO.getContent())
                 .setType(messageDTO.getType())
                 .setRead(false)
-                .setAvatar(avatar);
+                .setAvatar(loginUser.getAvatar());
 
         save(message);
 
@@ -167,7 +169,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
      */
     @Override
     public MessageVO getMessageDetail(Long id) {
-        Long userId = LoginHelper.getUserId();
+        Long userId = AuthenticationUtil.getUserId();
 
         // 检查消息是否存在且属于当前用户
         Message message = getById(id);

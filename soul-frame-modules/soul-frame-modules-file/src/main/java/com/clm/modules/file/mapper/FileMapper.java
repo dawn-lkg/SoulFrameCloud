@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.clm.modules.file.domain.entity.File;
 import com.clm.modules.file.domain.param.FileQueryParam;
 import com.clm.modules.file.domain.vo.FileVO;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.List;
  * @author 陈黎明
  * @date 2025/3/10
  */
-@Mapper
 public interface FileMapper extends BaseMapper<File> {
 
     /**

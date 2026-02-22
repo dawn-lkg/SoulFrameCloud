@@ -92,17 +92,6 @@ public class OperLogVO {
     @Schema(description = "操作地点")
     private String operLocation;
     
-    /**
-     * 请求参数
-     */
-    @Schema(description = "请求参数")
-    private String operParam;
-    
-    /**
-     * 返回参数
-     */
-    @Schema(description = "返回参数")
-    private String jsonResult;
     
     /**
      * 操作状态（0正常 1异常）
@@ -133,12 +122,7 @@ public class OperLogVO {
      */
     @Schema(description = "操作系统")
     private String os;
-    
-    /**
-     * 浏览器类型
-     */
-    @Schema(description = "浏览器类型")
-    private String browser;
+
     
     /**
      * 耗费时间（毫秒）

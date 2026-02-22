@@ -519,6 +519,8 @@ const handleResetPreferences = () => {
 </script>
 
 <style lang="scss" scoped>
+@use "sass:color";
+@use "sass:math";
 // 定义变量
 $base-spacing: 20px;
 $card-padding: 16px;
@@ -572,11 +574,11 @@ $transition-duration: 0.3s;
       }
       
       .upload-avatar {
-        margin-top: $base-spacing / 2;
+        margin-top: math.div($base-spacing, 2);
         
         .ant-btn-link {
           background-color: rgba($primary-color, 0.1);
-          border-radius: $border-radius / 2;
+          border-radius: math.div($border-radius, 2);
           padding: 2px 10px;
           
           &:hover {
@@ -588,7 +590,7 @@ $transition-duration: 0.3s;
     
     .profile-info {
       h2 {
-        margin-bottom: $base-spacing / 2;
+        margin-bottom: math.div($base-spacing, 2);
         font-size: $base-spacing - 4px;
         font-weight: 600;
         color: $dark-color;
@@ -609,7 +611,7 @@ $transition-duration: 0.3s;
         padding: $base-spacing $card-padding / 1.6;
         background-color: rgba(255, 255, 255, 0.6);
         border-radius: $border-radius;
-        margin: 0 $base-spacing / 2 $base-spacing / 2;
+        margin: 0 math.div($base-spacing, 2) math.div($base-spacing, 2);
         
         p {
           margin-bottom: $base-spacing * 0.4;
@@ -641,7 +643,7 @@ $transition-duration: 0.3s;
     }
     
     .ant-tabs-tab {
-      padding: $base-spacing / 2 $base-spacing;
+      padding: math.div($base-spacing, 2) $base-spacing;
       transition: all $transition-duration;
       
       &:hover {
@@ -656,7 +658,7 @@ $transition-duration: 0.3s;
     .ant-tabs-ink-bar {
       height: 3px;
       border-radius: 3px;
-      background: linear-gradient(to right, $primary-color, lighten($primary-color, 10%));
+      background: linear-gradient(to right, $primary-color, color.adjust($primary-color, $lightness: 10%));
     }
   }
   
@@ -668,7 +670,7 @@ $transition-duration: 0.3s;
     }
     
     .ant-input, .ant-input-password {
-      border-radius: $border-radius / 2;
+      border-radius: math.div($border-radius, 2);
       border-color: #d9d9d9;
       
       &:hover, &:focus {
@@ -678,12 +680,12 @@ $transition-duration: 0.3s;
     }
     
     .ant-btn {
-      border-radius: $border-radius / 2;
+      border-radius: math.div($border-radius, 2);
       height: 38px;
       padding: 0 $base-spacing;
       
       &-primary {
-        background: linear-gradient(to right, $primary-color, lighten($primary-color, 10%));
+        background: linear-gradient(to right, $primary-color, color.adjust($primary-color, $lightness: 10%));
         border: none;
         box-shadow: 0 2px 6px rgba($primary-color, 0.3);
         
@@ -698,14 +700,14 @@ $transition-duration: 0.3s;
   // 列表样式优化
   :deep(.ant-list) {
     .ant-list-item {
-      padding: $base-spacing / 2 0;
+      padding: math.div($base-spacing, 2) 0;
       transition: all $transition-duration;
-      border-radius: $border-radius / 2;
+      border-radius: math.div($border-radius, 2);
       
       &:hover {
         background-color: rgba($primary-color, 0.03);
-        padding-left: $base-spacing / 2;
-        padding-right: $base-spacing / 2;
+        padding-left: math.div($base-spacing, 2);
+        padding-right: math.div($base-spacing, 2);
       }
     }
     
@@ -726,14 +728,14 @@ $transition-duration: 0.3s;
   .color-block {
     width: $base-spacing;
     height: $base-spacing;
-    border-radius: $border-radius / 2;
+    border-radius: math.div($border-radius, 2);
     display: inline-block;
     vertical-align: middle;
     transition: all $transition-duration;
     
     &:hover {
       transform: scale(1.2);
-      box-shadow: 0 0 ($base-spacing / 2) rgba($primary-color, 0.5);
+      box-shadow: 0 0 (math.div($base-spacing, 2)) rgba($primary-color, 0.5);
     }
   }
   
