@@ -1,2 +1,3 @@
 com.clm.common.core.config.JacksonConfiguration
 com.clm.common.core.config.AsyncConfig
+com.clm.common.core.handler.GlobalExceptionHandler

@@ -47,6 +47,16 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 未知异常（兜底处理，确保返回 Result 格式）
+     */
+//    @ExceptionHandler(Throwable.class)
+//    public Result<?> handleThrowable(Throwable e, HttpServletRequest request) {
+//        String requestURI = request.getRequestURI();
+//        log.error("系统异常，请求地址: {}，异常信息: {}", requestURI, e.getMessage(), e);
+//        return Result.error(HttpCodeEnum.ERROR.getCode(), "系统异常，请联系管理员");
+//    }
+
+    /**
      * 认证失败
      */
     @ExceptionHandler(NotLoginException.class)
@@ -83,8 +93,9 @@ public class GlobalExceptionHandler {
      * 业务异常
      */
     @ExceptionHandler(BaseException.class)
-    public Result<?> handleServiceException(BaseException e) {
-        log.error(e.getMessage(), e);
+    public Result<?> handleServiceException(BaseException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("业务异常，请求地址: {}，异常信息: {}", requestURI, e.getMessage(), e);
         Integer code = e.getCode();
         return !Objects.isNull(code) ? Result.error(code, e.getMessage()) : Result.error(e.getMessage());
     }
@@ -95,6 +106,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public Result<?> handleRuntimeException(RuntimeException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
+
+        Throwable cause = e;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+            if (cause instanceof BaseException baseException) {
+                log.error("运行时异常包含业务异常，请求地址: {}，原始异常: {}", requestURI, cause.getMessage(), e);
+                Integer code = baseException.getCode();
+                return !Objects.isNull(code) ? Result.error(code, cause.getMessage()) : Result.error(cause.getMessage());
+            }
+        }
+        
         log.error("运行时异常，请求地址: {}，异常信息: {}", requestURI, e.getMessage(), e);
         return Result.error(HttpCodeEnum.ERROR.getCode(), "系统异常，请联系管理员");
     }

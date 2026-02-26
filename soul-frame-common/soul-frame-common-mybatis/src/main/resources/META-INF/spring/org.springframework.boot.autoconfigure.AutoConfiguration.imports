@@ -1,1 +1,2 @@
 com.clm.soulframe.mybatis.config.MyBatisConfig
+com.clm.soulframe.mybatis.handler.MyMetaObjectHandler

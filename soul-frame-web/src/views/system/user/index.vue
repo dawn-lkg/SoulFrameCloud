@@ -44,8 +44,8 @@
     </a-drawer>
 
     <a-row :gutter="16">
-      <!-- 部门树 - 小屏幕隐藏 -->
-      <a-col v-if="deptList.length > 0" :lg="4" :md="6" :sm="0" :span="4" :xl="4" :xs="0" class="dept-tree-col">
+      <!-- 部门树 - 由 deptTreeVisible 控制显示 -->
+      <a-col v-if="deptList.length > 0 && deptTreeVisible" :lg="4" :md="6" :sm="0" :span="4" :xl="4" :xs="0" class="dept-tree-col">
         <div class="common-container dept-tree-container">
           <div class="dept-tree-header">
             <h4>部门列表</h4>
@@ -68,8 +68,8 @@
       </a-col>
       
       <!-- 主内容区 - 响应式宽度 -->
-      <a-col :lg="deptList.length > 0 ? 20 : 24" :md="deptList.length > 0 ? 18 : 24" :sm="24" :span="deptList.length > 0 ? 20 : 24"
-             :xl="deptList.length > 0 ? 20 : 24" :xs="24">
+      <a-col :lg="deptList.length > 0 && deptTreeVisible ? 20 : 24" :md="deptList.length > 0 && deptTreeVisible ? 18 : 24" :sm="24" :span="deptList.length > 0 && deptTreeVisible ? 20 : 24"
+             :xl="deptList.length > 0 && deptTreeVisible ? 20 : 24" :xs="24">
         <div class="common-container">
           <!-- 搜索区域 -->
           <a-form
@@ -114,6 +114,13 @@
                     <ReloadOutlined/>
                   </template>
                   重置
+                </a-button>
+                <!-- 部门树显示/隐藏切换按钮 -->
+                <a-button v-if="deptList.length > 0" @click="deptTreeVisible = !deptTreeVisible">
+                  <template #icon>
+                    <ClusterOutlined/>
+                  </template>
+                  {{ deptTreeVisible ? '隐藏部门' : '显示部门' }}
                 </a-button>
               </a-space>
             </a-form-item>
@@ -181,6 +188,9 @@
                   <!-- {{ record.sex === "0" ? "男" : "女" }} -->
                   <DictTag :value="record.sex" dictType="sys_user_sex"/>
                 </template>
+                <template v-else-if="column.dataIndex === 'deptName'">
+                  {{ getDeptName(record.deptId) }}
+                </template>
                 <template v-else-if="column.dataIndex === 'action'">
                   <a-space>
                     <a-button
@@ -241,6 +251,7 @@
 import {message, Modal} from "ant-design-vue";
 import {
   AppstoreOutlined,
+  ClusterOutlined,
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
@@ -284,6 +295,13 @@ const tableConfig = reactive({
       dataIndex: "userId",
       key: "userId",
       width: 50,
+      visible: false,
+    },
+    {
+      title: "部门",
+      dataIndex: "deptName",
+      key: "deptName",
+      width: 150,
       visible: false,
     },
     {
@@ -402,6 +420,9 @@ const selectedDeptKeys = ref([]);
 
 // 部门抽屉显示状态
 const deptDrawerVisible = ref(false);
+
+// 部门树列显示状态（默认隐藏）
+const deptTreeVisible = ref(false);
 
 // 组件挂载时获取数据
 onMounted(() => {

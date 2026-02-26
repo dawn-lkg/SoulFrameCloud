@@ -662,7 +662,7 @@ const formatFileSize = (size) => {
 <style lang="scss" scoped>
 .file-layout {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 180px 1fr;
   gap: 16px;
   align-items: stretch;
 }

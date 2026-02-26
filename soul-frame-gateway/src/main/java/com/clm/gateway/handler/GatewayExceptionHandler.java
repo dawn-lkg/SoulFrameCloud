@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @Order(-1)
-//@Component
+@Component
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
 
     @Override

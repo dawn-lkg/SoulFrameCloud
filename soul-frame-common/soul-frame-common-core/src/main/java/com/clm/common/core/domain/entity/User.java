@@ -73,7 +73,6 @@ public class User extends BaseEntity implements Serializable {
     /**
     * 密码
     */
-    @JsonIgnore
     private String password;
             
     /**

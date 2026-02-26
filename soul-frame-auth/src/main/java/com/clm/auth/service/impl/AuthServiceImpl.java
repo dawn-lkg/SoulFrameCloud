@@ -99,12 +99,10 @@ public class AuthServiceImpl implements AuthService {
                 throw new BaseException(HttpCodeEnum.ACCOUNT_DISABLED);
             }
 
-
-
-//            if(!PasswordUtils.matches(loginBody.getPassword(), user.getPassword())){
-//                recordLoginFail(username, "密码错误");
-//                throw new BaseException(HttpCodeEnum.PASSWORD_ERROR);
-//            }
+            if(!PasswordUtils.matches(loginBody.getPassword(), user.getPassword())){
+                recordLoginFail(username, "密码错误");
+                throw new BaseException(HttpCodeEnum.PASSWORD_ERROR);
+            }
 
             // 更新登录信息
             remoteUserService.updateLoginInfo(user.getUserId());
