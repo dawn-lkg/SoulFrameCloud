@@ -1,12 +1,16 @@
-server:
-  port: 9991
 spring:
   application:
-      name: soul-frame-test
+    name: soul-frame-test
+  profiles:
+    active: dev
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 111.228.52.114:8848
+        username: nacos
+        password: nacos
       config:
-        import-check:
-          enabled: false
+        server-addr: 111.228.52.114:8848
+        username: nacos
+        password: nacos
+  config:

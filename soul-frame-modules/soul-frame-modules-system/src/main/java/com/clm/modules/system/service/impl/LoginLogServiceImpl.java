@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.clm.api.system.domain.LoginLogDTO;
 import com.clm.common.core.domain.BasePageParam;
 import com.clm.common.core.enums.HttpCodeEnum;
 import com.clm.common.core.exception.BaseException;
@@ -132,10 +133,46 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
     public void recordLoginSuccess(String username, Long userId, String message) {
         recordLoginInfo(username, userId, "0", message);
     }
+
+    @Override
+    public void recordLoginSuccess(LoginLogDTO loginLogDTO) {
+        // 使用 DTO 中传递的信息
+        LoginLog loginLog = new LoginLog();
+        loginLog.setUserName(loginLogDTO.getUserName());
+        loginLog.setUserId(loginLogDTO.getUserId());
+        loginLog.setIpaddr(loginLogDTO.getIpaddr());
+        loginLog.setLoginLocation(loginLogDTO.getLoginLocation());
+        loginLog.setBrowser(loginLogDTO.getBrowser());
+        loginLog.setOs(loginLogDTO.getOs());
+        loginLog.setStatus("0");
+        loginLog.setMsg(loginLogDTO.getMessage());
+        loginLog.setLoginTime(new Date());
+
+        // 异步保存登录日志
+        insertLoginLogAsync(loginLog);
+    }
     
     @Override
     public void recordLoginFail(String username, String message) {
         recordLoginInfo(username, null, "1", message);
+    }
+
+    @Override
+    public void recordLoginFail(LoginLogDTO loginLogDTO) {
+        // 使用 DTO 中传递的信息
+        LoginLog loginLog = new LoginLog();
+        loginLog.setUserName(loginLogDTO.getUserName());
+        loginLog.setUserId(loginLogDTO.getUserId());
+        loginLog.setIpaddr(loginLogDTO.getIpaddr());
+        loginLog.setLoginLocation(loginLogDTO.getLoginLocation());
+        loginLog.setBrowser(loginLogDTO.getBrowser());
+        loginLog.setOs(loginLogDTO.getOs());
+        loginLog.setStatus("1");
+        loginLog.setMsg(loginLogDTO.getMessage());
+        loginLog.setLoginTime(new Date());
+
+        // 异步保存登录日志
+        insertLoginLogAsync(loginLog);
     }
 
     @Override
@@ -168,7 +205,7 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
      * 
      * @param username 用户名
      * @param userId 用户ID
-     * @param status 状态
+     * @param status 状态 
      * @param message 消息内容
      */
     private void recordLoginInfo(String username, Long userId, String status, String message) {

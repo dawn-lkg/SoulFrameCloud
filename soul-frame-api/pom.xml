@@ -14,6 +14,7 @@
     <modules>
         <module>soul-frame-api-system</module>
         <module>soul-frame-api-file</module>
+        <module>soul-frame-api-notice</module>
     </modules>
 
 </project>

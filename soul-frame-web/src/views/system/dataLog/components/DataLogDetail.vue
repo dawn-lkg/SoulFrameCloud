@@ -67,8 +67,8 @@ const detailInfo = ref(null)
 
 // 获取数据日志详情
 const getDetail = async () => {
-  const res = await getDataLogDetail(props.operId)
-  detailInfo.value = res.data
+  const data = await getDataLogDetail(props.operId)
+  detailInfo.value = data
   console.log(detailInfo.value);
   
 }

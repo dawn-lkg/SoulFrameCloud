@@ -11,6 +11,7 @@ import com.clm.common.core.model.LoginUser;
 import com.clm.common.core.utils.IpUtils;
 import com.clm.common.core.utils.ServletUtils;
 import com.clm.common.core.utils.UserAgentUtils;
+import com.clm.common.feign.constant.FeignConstants;
 import com.clm.common.log.annotation.Log;
 import com.clm.common.log.service.AsyncLogService;
 import com.clm.common.security.utils.AuthenticationUtil;
@@ -26,6 +27,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
@@ -97,6 +99,16 @@ public class LogAspect {
      */
     protected void handleLog(JoinPoint joinPoint, Log controllerLog, Exception e, Object result) {
         try {
+            // 获取请求对象，检查是否为 Feign 内部调用
+            HttpServletRequest request = ServletUtils.getRequest();
+            if (request != null) {
+                String feignFlag = request.getHeader(FeignConstants.FEIGN_INTERNAL_FLAG);
+                if ("true".equals(feignFlag)) {
+                    // Feign 内部调用，不记录日志
+                    return;
+                }
+            }
+
             // 获取当前登录用户
 
             Long userId =0L;
@@ -121,15 +133,10 @@ public class LogAspect {
             operLog.setOperTime(new Date());
             operLog.setCostTime(costTime);
 
-            // 记录请求URL和方法
-            HttpServletRequest request = ServletUtils.getRequest();
             if (request != null) {
                 operLog.setOperUrl(request.getRequestURI());
-            }
-            if (request != null) {
                 operLog.setRequestMethod(request.getMethod());
             }
-
             // 记录操作人和部门
             if (loginUser != null) {
                 operLog.setOperName(loginUser.getUsername());

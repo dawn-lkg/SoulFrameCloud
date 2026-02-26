@@ -72,7 +72,6 @@ declare module 'vue' {
     AUploadDragger: typeof import('ant-design-vue/es')['UploadDragger']
     ChatWidget: typeof import('./components/ChatWidget.vue')['default']
     CommonTable: typeof import('./components/common/common-table.vue')['default']
-    DetailDrawer: typeof import('./components/common/detail-drawer.vue')['default']
     DictRadio: typeof import('./components/DictRadio/index.vue')['default']
     DictSelect: typeof import('./components/DictSelect/index.vue')['default']
     DictTag: typeof import('./components/DictTag/index.vue')['default']

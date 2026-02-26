@@ -1,2 +1,2 @@
 com.clm.common.core.config.JacksonConfiguration
-com.clm.common.core.config.MybatisPlusConfig
+com.clm.common.core.config.AsyncConfig

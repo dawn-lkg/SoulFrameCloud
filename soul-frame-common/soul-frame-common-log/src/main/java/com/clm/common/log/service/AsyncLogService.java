@@ -16,7 +16,7 @@ public class AsyncLogService {
 
     private final RemoteLogService remoteLogService;
 
-    @Async
+    @Async("logExecutor")
     public void insertOperLogAsync(OperLogDTO operLog) {
         remoteLogService.insertOperLog(operLog);
     }

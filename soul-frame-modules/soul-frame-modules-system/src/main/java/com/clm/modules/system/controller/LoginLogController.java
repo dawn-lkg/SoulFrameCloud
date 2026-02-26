@@ -1,12 +1,12 @@
 package com.clm.modules.system.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.clm.api.system.domain.LoginLogDTO;
 import com.clm.common.core.controller.BaseController;
 import com.clm.common.core.domain.BasePageParam;
 import com.clm.common.core.domain.Result;
 import com.clm.common.log.annotation.Log;
 import com.clm.common.log.enums.BusinessType;
-import com.clm.modules.system.domain.entity.LoginLog;
 import com.clm.modules.system.domain.param.LoginLogQueryParam;
 import com.clm.modules.system.domain.vo.LoginLogVO;
 import com.clm.modules.system.service.LoginLogService;
@@ -86,15 +86,15 @@ public class LoginLogController extends BaseController {
 
     @Operation(summary = "记录登录成功日志")
     @PostMapping("/success")
-    public Result<Void> recordLoginSuccess(@RequestBody LoginLog loginLog) {
-        loginLogService.recordLoginSuccess(loginLog.getUserName(), loginLog.getUserId(), loginLog.getMsg());
+    public Result<Void> recordLoginSuccess(@RequestBody LoginLogDTO loginLogDTO) {
+        loginLogService.recordLoginSuccess(loginLogDTO);
         return Result.success();
     }
 
     @Operation(summary = "记录登录失败日志")
     @PostMapping("/fail")
-    public Result<Void> recordLoginFail(@RequestBody LoginLog loginLog) {
-        loginLogService.recordLoginFail(loginLog.getUserName(), loginLog.getMsg());
+    public Result<Void> recordLoginFail(@RequestBody LoginLogDTO loginLogDTO) {
+        loginLogService.recordLoginFail(loginLogDTO);
         return Result.success();
     }
 } 

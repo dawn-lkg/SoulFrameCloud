@@ -8,6 +8,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>soul-frame-auth</artifactId>
+    <packaging>jar</packaging>
     <description>soul-frame-auth</description>
 
     <dependencies>
@@ -24,37 +25,50 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
+        <!-- SpringBoot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- SpringBoot 测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- 鉴权模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-security</artifactId>
         </dependency>
 
+        <!-- 通用模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-core</artifactId>
         </dependency>
 
+        <!-- 日志模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-log</artifactId>
         </dependency>
 
+        <!-- Redis 模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-redis</artifactId>
         </dependency>
 
+        <!-- 分布式事务 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-seata</artifactId>
+        </dependency>
+
+        <!-- 系统模块api模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-api-system</artifactId>
@@ -72,6 +86,7 @@
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
+        <!-- 鉴权模块 -->
         <dependency>
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-security</artifactId>
@@ -82,6 +97,11 @@
             <groupId>com.clm</groupId>
             <artifactId>soul-frame-common-feign</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-api-notice</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -89,6 +109,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -2,6 +2,7 @@ package com.clm.modules.system.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.clm.api.system.domain.LoginLogDTO;
 import com.clm.common.core.domain.BasePageParam;
 import com.clm.modules.system.domain.entity.LoginLog;
 import com.clm.modules.system.domain.param.LoginLogQueryParam;
@@ -68,20 +69,34 @@ public interface LoginLogService extends IService<LoginLog> {
     
     /**
      * 记录登录成功日志
-     * 
+     *
      * @param username 用户名
      * @param userId 用户ID
      * @param message 消息内容
      */
     void recordLoginSuccess(String username, Long userId, String message);
-    
+
+    /**
+     * 记录登录成功日志
+     *
+     * @param loginLogDTO 登录日志 DTO
+     */
+    void recordLoginSuccess(LoginLogDTO loginLogDTO);
+
     /**
      * 记录登录失败日志
-     * 
+     *
      * @param username 用户名
      * @param message 消息内容
      */
     void recordLoginFail(String username, String message);
+
+    /**
+     * 记录登录失败日志
+     *
+     * @param loginLogDTO 登录日志 DTO
+     */
+    void recordLoginFail(LoginLogDTO loginLogDTO);
 
     /**
      * 获取当前用户登录日志

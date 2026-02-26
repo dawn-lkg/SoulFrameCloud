@@ -31,18 +31,21 @@
         <easyexcel.version>3.1.5</easyexcel.version>
         <oshi.version>6.4.0</oshi.version>
         <druid.version>1.2.16</druid.version>
+        <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
         <quartz.version>2.3.2</quartz.version>
         <mysql.version>8.0.33</mysql.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
+        <seata.version>2.0.0</seata.version>
+        <spring-cloud-seata.version>2023.0.1.0</spring-cloud-seata.version>
     </properties>
 
     <modules>
         <module>soul-frame-common</module>
-        <module>soul-frame-gateway</module>
-        <module>soul-frame-test</module>
         <module>soul-frame-modules</module>
         <module>soul-frame-api</module>
         <module>soul-frame-auth</module>
+        <module>soul-frame-gateway</module>
+        <module>soul-frame-test</module>
     </modules>
 
     <dependencyManagement>
@@ -74,10 +77,48 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Seata 分布式事务  -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+                <version>${spring-cloud-seata.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-spring-boot-starter</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-all</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+
+            <!-- seata模块 -->
+            <dependency>
+                <groupId>com.clm</groupId>
+                <artifactId>soul-frame-common-seata</artifactId>
+                <version>${soul-frame.version}</version>
+            </dependency>
+
+            <!-- mybatis模块 -->
+            <dependency>
+                <groupId>com.clm</groupId>
+                <artifactId>soul-frame-common-mybatis</artifactId>
+                <version>${soul-frame.version}</version>
+            </dependency>
+
             <!-- hutool -->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
+                <version>${htool.version}</version>
+            </dependency>
+
+            <!-- hutool-json -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-json</artifactId>
                 <version>${htool.version}</version>
             </dependency>
 
@@ -152,11 +193,22 @@
                 <artifactId>soul-frame-api-file</artifactId>
                 <version>${soul-frame.version}</version>
             </dependency>
+            <!-- 通知接口模块  -->
+            <dependency>
+                <groupId>com.clm</groupId>
+                <artifactId>soul-frame-api-notice</artifactId>
+                <version>${soul-frame.version}</version>
+            </dependency>
             <!-- Redis模块 -->
             <dependency>
                 <groupId>com.clm</groupId>
                 <artifactId>soul-frame-common-redis</artifactId>
                 <version>${soul-frame.version}</version>
+            </dependency>
+            <!-- mybatis模块 -->
+            <dependency>
+                <groupId>com.clm</groupId>
+                <artifactId>soul-frame-common-mybatis</artifactId>
             </dependency>
             <!-- sse  -->
             <dependency>
@@ -275,6 +327,13 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
+            </dependency>
+
+            <!-- Dynamic DataSource 多数据源 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+                <version>${dynamic-datasource.version}</version>
             </dependency>
 
             <!-- 数据库驱动 -->

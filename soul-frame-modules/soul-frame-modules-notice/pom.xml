@@ -44,10 +44,16 @@
             <artifactId>soul-frame-common-log</artifactId>
         </dependency>
 
-        <!-- MyBatis-Plus -->
+        <!-- 分布式事务 -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-seata</artifactId>
+        </dependency>
+
+        <!-- MyBatis模块 -->
+        <dependency>
+            <groupId>com.clm</groupId>
+            <artifactId>soul-frame-common-mybatis</artifactId>
         </dependency>
 
         <!-- SSE模块 -->
@@ -62,16 +68,11 @@
             <artifactId>soul-frame-common-feign</artifactId>
         </dependency>
 
-        <!-- 数据库驱动 -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
 
-        <!-- druid数据库连接池-->
+        <!-- 测试 -->
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
 
@@ -80,6 +81,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

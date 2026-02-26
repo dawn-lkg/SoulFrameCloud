@@ -3,11 +3,15 @@ package com.clm.auth.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.StrUtil;
+import com.clm.api.notice.domain.MessageDTO;
+import com.clm.api.notice.domain.NotificationDTO;
 import com.clm.api.system.RemoteLogService;
 import com.clm.api.system.RemoteMenuService;
 import com.clm.api.system.RemoteOnlineUserService;
 import com.clm.api.system.RemoteRoleService;
 import com.clm.api.system.RemoteUserService;
+import com.clm.api.notice.RemoteNotificationService;
+import com.clm.api.notice.RemoteMessageService;
 import com.clm.api.system.domain.LoginLogDTO;
 import com.clm.api.system.domain.OnlineUserDTO;
 import com.clm.api.system.domain.RouterDTO;
@@ -25,9 +29,15 @@ import com.clm.common.redis.constants.RedisKeyConstants;
 import com.clm.common.redis.utils.RedisUtils;
 import com.clm.common.security.utils.AuthenticationUtil;
 import com.clm.common.core.utils.CommonUtils;
+import com.clm.common.core.utils.IpUtils;
 import com.clm.common.core.utils.PasswordUtils;
+import com.clm.common.core.utils.ServletUtils;
+import com.clm.common.core.utils.UserAgentUtils;
 import com.wf.captcha.SpecCaptcha;
+import io.seata.spring.annotation.GlobalTransactional;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -56,7 +66,11 @@ public class AuthServiceImpl implements AuthService {
 
     private final RemoteRoleService remoteRoleService;
 
+    @Value("${ip.xdbPath:default}")
+    private String xdbPath;
+
     @Override
+    @GlobalTransactional(rollbackFor = Exception.class)
     public SaTokenInfo login(LoginBody loginBody) {
         try {
             String username = loginBody.getUsername();
@@ -84,6 +98,8 @@ public class AuthServiceImpl implements AuthService {
                 recordLoginFail(username, "账号已停用");
                 throw new BaseException(HttpCodeEnum.ACCOUNT_DISABLED);
             }
+
+
 
 //            if(!PasswordUtils.matches(loginBody.getPassword(), user.getPassword())){
 //                recordLoginFail(username, "密码错误");
@@ -197,10 +213,25 @@ public class AuthServiceImpl implements AuthService {
      */
     private void recordLoginSuccess(String username, Long userId, String message) {
         LoginLogDTO loginLogDTO = new LoginLogDTO();
-        loginLogDTO.setUsername(username);
+        loginLogDTO.setUserName(username);
         loginLogDTO.setUserId(userId);
         loginLogDTO.setMessage(message);
         loginLogDTO.setStatus(1);
+
+        // 获取请求信息
+        HttpServletRequest request = ServletUtils.getRequest();
+        String userAgent = null;
+        if (request != null) {
+            userAgent = UserAgentUtils.getUserAgent(request);
+        }
+        String ip = IpUtils.getIpAddr(request);
+
+        // 填充登录日志信息
+        loginLogDTO.setIpaddr(ip);
+        loginLogDTO.setLoginLocation(IpUtils.getCityInfoByVectorIndex(ip, xdbPath));
+        loginLogDTO.setBrowser(UserAgentUtils.getBrowser(userAgent));
+        loginLogDTO.setOs(UserAgentUtils.getOs(userAgent));
+
         remoteLogService.recordLoginSuccess(loginLogDTO);
     }
 
@@ -209,9 +240,24 @@ public class AuthServiceImpl implements AuthService {
      */
     private void recordLoginFail(String username, String message) {
         LoginLogDTO loginLogDTO = new LoginLogDTO();
-        loginLogDTO.setUsername(username);
+        loginLogDTO.setUserName(username);
         loginLogDTO.setMessage(message);
         loginLogDTO.setStatus(0);
+
+        // 获取请求信息
+        HttpServletRequest request = ServletUtils.getRequest();
+        String userAgent = null;
+        if (request != null) {
+            userAgent = UserAgentUtils.getUserAgent(request);
+        }
+        String ip = IpUtils.getIpAddr(request);
+
+        // 填充登录日志信息
+        loginLogDTO.setIpaddr(ip);
+        loginLogDTO.setLoginLocation(IpUtils.getCityInfoByVectorIndex(ip, xdbPath));
+        loginLogDTO.setBrowser(UserAgentUtils.getBrowser(userAgent));
+        loginLogDTO.setOs(UserAgentUtils.getOs(userAgent));
+
         remoteLogService.recordLoginFail(loginLogDTO);
     }
 

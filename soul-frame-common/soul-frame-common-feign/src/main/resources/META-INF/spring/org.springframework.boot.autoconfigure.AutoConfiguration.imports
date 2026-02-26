@@ -1,1 +1,2 @@
-com.clm.common.feign.FeignTokenInterceptorConfig
+com.clm.common.feign.interceptor.FeignTokenInterceptor
+com.clm.common.feign.interceptor.FeignSeataXidInterceptor

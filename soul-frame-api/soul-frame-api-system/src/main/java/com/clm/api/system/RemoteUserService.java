@@ -18,9 +18,21 @@ import org.springframework.web.bind.annotation.PutMapping;
 @FeignClient(contextId = "RemoteUserService", value = ServiceNameConstants.SYSTEM_SERVICE)
 public interface RemoteUserService {
 
+    /**
+     * 根据用户名获取用户信息
+     *
+     * @param username 用户名
+     * @return 用户信息
+     */
     @GetMapping("/system/user/info/{username}")
     Result<User> getUserByUsername(@PathVariable("username") String username);
 
+    /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId 用户ID
+     * @return 用户信息
+     */
     @GetMapping("/system/user/{userId}")
     Result<User> getUserById(@PathVariable("userId") Long userId);
 

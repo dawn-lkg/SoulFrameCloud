@@ -1,0 +1,73 @@
+server:
+  port: 9991
+spring:
+  application:
+    name: soul-frame-test
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 111.228.52.114:8848
+        username: nacos
+        password: nacos
+      config:
+        server-addr: 111.228.52.114:8848
+        username: nacos
+        password: nacos
+        import-check:
+          enabled: false
+  # Dynamic DataSource 多数据源配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 动态数据源配置
+    dynamic:
+      primary: order
+      # 严格匹配数据源名称，默认 false
+      strict: false
+      # 配置所有数据源
+      datasource:
+        # 订单库
+        order:
+          url: jdbc:mysql://120.27.215.0:3306/order_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: KYPiD7rnjzmmmDLs
+          driver-class-name: com.mysql.cj.jdbc.Driver
+        # 库存库
+        stock:
+          url: jdbc:mysql://120.27.215.0:3306/stock_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: KYPiD7rnjzmmmDLs
+          driver-class-name: com.mysql.cj.jdbc.Driver
+      seata: true
+
+# MyBatis Plus 配置
+mybatis-plus:
+  # 搜索指定包别名
+  type-aliases-package: com.clm.test.domain.entity
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath*:mapper/**/*.xml
+  # 全局配置
+  global-config:
+    # 数据库相关配置
+    db-config:
+      # 主键类型
+      id-type: AUTO
+      # 逻辑删除的字段名
+      logic-delete-field: delFlag
+      # 逻辑删除值：未删除为0
+      logic-not-delete-value: 0
+      # 逻辑删除值：删除为1
+      logic-delete-value: 1
+  configuration:
+    # 驼峰命名
+    map-underscore-to-camel-case: true
+
+# 日志配置
+logging:
+  level:
+    com.clm.test: DEBUG
+    com.baomidou.dynamic.datasource: DEBUG
+
+
+
