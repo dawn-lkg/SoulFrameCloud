@@ -139,9 +139,26 @@
               <template #bodyCell="{ column, record }">
                 <template v-if="column.key === 'fileName'">
                   <div class="file-name-cell">
-                    <file-type-icon
-                        :file-type="getFileType(record.fileExtension)"
-                    />
+                    <!-- 图片显示缩略图 -->
+                    <template v-if="isShowThumbnail(record.fileExtension) && record.thumbnailUrl">
+                      <a-tooltip title="点击预览">
+                      <a-image
+                          :src="record.thumbnailUrl"
+                          :width="32"
+                          :height="32"
+                            style="object-fit: cover; border-radius: 4px; margin-right: 8px; vertical-align: middle; cursor: pointer;"
+                          :preview="false"
+                            @click="handlePreview(record)"
+                      />
+                      </a-tooltip>
+                    </template>
+                    <!-- 非图片显示图标 -->
+                    <template v-else>
+                      <file-type-icon
+                          :file-type="getFileTypeEn(record.fileExtension)"
+                          :file-extension="record.fileExtension"
+                      />
+                    </template>
                     <a @click="handlePreview(record)">{{
                         record.originalName
                       }}</a>
@@ -379,9 +396,31 @@ const videoSuffix = [
 ];
 // 音频类型后缀
 const audioSuffix = ["mp3", "wav", "ogg"];
+// 压缩包类型后缀
+const archiveSuffix = ["zip", "rar", "7z", "tar", "gz", "bz2", "xz"];
 
 // 根据后缀获取文件类型
 const getFileType = (suffix) => {
+  if (imageSuffix.includes(suffix)) {
+    return "图片";
+  }
+  if (documentSuffix.includes(suffix)) {
+    return "文档";
+  }
+  if (videoSuffix.includes(suffix)) {
+    return "视频";
+  }
+  if (audioSuffix.includes(suffix)) {
+    return "音频";
+  }
+  if (archiveSuffix.includes(suffix)) {
+    return "压缩包";
+  }
+  return "其他";
+};
+
+// 获取英文文件类型（用于图标组件）
+const getFileTypeEn = (suffix) => {
   if (imageSuffix.includes(suffix)) {
     return "image";
   }
@@ -394,7 +433,15 @@ const getFileType = (suffix) => {
   if (audioSuffix.includes(suffix)) {
     return "audio";
   }
+  if (archiveSuffix.includes(suffix)) {
+    return "zip";
+  }
   return "other";
+};
+
+// 判断是否为图片文件
+const isShowThumbnail = (suffix) => {
+  return imageSuffix.includes(suffix) || videoSuffix.includes(suffix);
 };
 
 // 根据文件类型返回文件后缀

@@ -58,6 +58,12 @@ public class FileVO implements Serializable {
     private String fileUrl;
 
     /**
+     * 缩略图地址
+     */
+    @Schema(description = "缩略图地址")
+    private String thumbnailUrl;
+
+    /**
      * 文件哈希值(SHA256)
      */
     @Schema(description = "文件哈希值(SHA256)")

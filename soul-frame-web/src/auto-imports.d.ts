@@ -77,6 +77,7 @@ declare global {
   const useLink: typeof import('vue-router')['useLink']
   const useMessageStore: typeof import('./stores/index.js')['useMessageStore']
   const useModel: typeof import('vue')['useModel']
+  const useNoteStore: typeof import('./stores/index.js')['useNoteStore']
   const useNotificationStore: typeof import('./stores/index.js')['useNotificationStore']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']

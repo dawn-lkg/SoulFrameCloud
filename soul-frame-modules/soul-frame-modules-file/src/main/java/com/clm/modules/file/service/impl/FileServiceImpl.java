@@ -3,7 +3,6 @@ package com.clm.modules.file.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,6 +17,7 @@ import com.clm.modules.file.domain.entity.File;
 import com.clm.modules.file.domain.param.FileQueryParam;
 import com.clm.modules.file.domain.vo.FileVO;
 import com.clm.modules.file.mapper.FileMapper;
+import com.clm.modules.file.utils.FileUtils;
 import com.clm.modules.file.service.FileService;
 import io.minio.*;
 import io.minio.http.Method;
@@ -30,12 +30,18 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -51,6 +57,8 @@ import java.util.stream.Collectors;
 public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements FileService {
 
     private final MinioClient minioClient;
+
+    private final FileUtils fileUtils;
 
     @Value("${minio.endpoint}")
     private String endpoint;
@@ -221,6 +229,17 @@ public class FileServiceImpl extends ServiceImpl<FileMapper, File> implements Fi
                 int height = bufferedImage.getHeight();
                 fileEntity.setWidth(width);
                 fileEntity.setHeight(height);
+
+                // 生成缩略图
+                String thumbnailUrl = fileUtils.getImageThumbnailUrl(file, fileName, bucketName);
+                if (thumbnailUrl != null) {
+                    fileEntity.setThumbnailUrl(thumbnailUrl);
+                }
+            } else if (mimeType != null && mimeType.startsWith("video/")) {
+                String thumbnailUrl = fileUtils.getVideoFirstFrameThumbnailUrl(file, fileName, bucketName);
+                if (thumbnailUrl != null) {
+                    fileEntity.setThumbnailUrl(thumbnailUrl);
+                }
             }
             
             // 保存到数据库

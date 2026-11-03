@@ -9,6 +9,7 @@
         a.upload_source, a.download_count, a.view_count, a.last_accessed_at, a.metadata, a.tags, a.description,
         a.create_time,
         a.file_url,
+        a.thumbnail_url,
         b.user_name
         FROM sys_file a
         left join sys_user b on a.owner_id = b.user_id

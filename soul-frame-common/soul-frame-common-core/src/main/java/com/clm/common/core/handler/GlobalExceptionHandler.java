@@ -8,6 +8,7 @@ import com.clm.common.core.enums.HttpCodeEnum;
 import com.clm.common.core.exception.BaseException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class GlobalExceptionHandler {
 
     /**
@@ -152,7 +154,8 @@ public class GlobalExceptionHandler {
     public Result<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String message = e.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .distinct()
                 .collect(Collectors.joining("; "));
         log.error("参数校验异常，请求地址: {}，异常信息: {}", requestURI, message);
         return Result.error(HttpCodeEnum.BAD_REQUEST.getCode(), message);
